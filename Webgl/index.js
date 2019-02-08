@@ -14,7 +14,7 @@ function createShader(webgl, sourceCode, type) {
     return shader;
 }
 
-// 初始化vertexBuffer, 并且将相关的数据传递到vertexBuffer中， 最终将数据传递到vertexShder中
+// 初始化vertexBuffer, 并且将相关的数据传递到vertexBuffer中， 最终将数据传递到vertexShader中
 function initVertexBuffers(webgl) {
     // 所有顶点的数据
     let vertices = new Float32Array([
@@ -43,14 +43,38 @@ function initVertexBuffers(webgl) {
     return n;
 }
 
+
+let currentAngle = 0;
+let lastTime = new Date();
+
 // 绘制方法
 webgl.clearColor(0, 0, 0, 1);
 
 function draw() {
+	modelMatrix.setRotate(currentAngle, 0, 1, 0);
+
+	// 往uniform传输数据
+	webgl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+
     // clear canvas and add background color;
     webgl.clear(webgl.COLOR_BUFFER_BIT);
 
     webgl.drawArrays(webgl.TRIANGLES, 0, n);
+}
+
+function animate() {
+  let now = Date.now();
+  let duration = now - lastTime;
+  lastTime = now;
+
+  // 计算角度
+  currentAngle = currentAngle + duration / 1000 * 180;
+}
+
+function tick() {
+  animate();
+  draw();
+  requestAnimationFrame(tick);
 }
 
 // 定义顶点着色器, 片源着色器
@@ -58,7 +82,7 @@ let vertexShader, fragmentShader;
 // 着色器相关源代码
 let VSHADER_SOURCE, FSHADER_SOURCE;
 
-/** 
+/**
 VSHADER_SOURCE = 
    `attribute vec4 a_Position;\n
     void main() {\n 
@@ -69,13 +93,14 @@ FSHADER_SOURCE = `
     void main () {\n
         gl_FragCOlor = vec4(1.0, 0.0, 0.0, 1.0)\n
 `
-*/
+ */
 
- /* */
+/* */
 VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' + 
+  'uniform mat4 u_ModelMatrix;\n' +
   'void main () {\n' + 
-    'gl_Position = a_Position;\n' + 
+    'gl_Position = u_ModelMatrix * a_Position;\n' + 
   '}\n'
 
 FSHADER_SOURCE =
@@ -101,10 +126,15 @@ webgl.useProgram(program);
 
 webgl.program = program;
 
+
 // js代码通过显往着色器中传递数据
 
 // write the position of vs\ertices to a vertex shader
 let n = initVertexBuffers(webgl);
 
-draw();
+// 拿到uninform的地址
+let u_ModelMatrix = webgl.getUniformLocation(webgl.program, 'u_ModelMatrix')
+let modelMatrix = new Matrix4();
+
+tick();
 
