@@ -52,14 +52,14 @@ webgl.clearColor(0, 0, 0, 1);
 
 function draw() {
 	modelMatrix.setRotate(currentAngle, 0, 1, 0);
+  // 往uniform传输数据
+  webgl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  webgl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
 
-	// 往uniform传输数据
-	webgl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  // clear canvas and add background color;
+  webgl.clear(webgl.COLOR_BUFFER_BIT);
 
-    // clear canvas and add background color;
-    webgl.clear(webgl.COLOR_BUFFER_BIT);
-
-    webgl.drawArrays(webgl.TRIANGLES, 0, n);
+  webgl.drawArrays(webgl.TRIANGLES, 0, n);
 }
 
 function animate() {
@@ -99,8 +99,9 @@ FSHADER_SOURCE = `
 VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' + 
   'uniform mat4 u_ModelMatrix;\n' +
+  'uniform mat4 u_Viewmatrix;\n' +
   'void main () {\n' + 
-    'gl_Position = u_ModelMatrix * a_Position;\n' + 
+    'gl_Position = u_Viewmatrix * u_ModelMatrix * a_Position;\n' + 
   '}\n'
 
 FSHADER_SOURCE =
@@ -133,7 +134,12 @@ webgl.program = program;
 let n = initVertexBuffers(webgl);
 
 // 拿到uninform的地址
-let u_ModelMatrix = webgl.getUniformLocation(webgl.program, 'u_ModelMatrix')
+let u_ModelMatrix = webgl.getUniformLocation(webgl.program, 'u_ModelMatrix');
+let u_ViewMatrix = webgl.getUniformLocation(webgl.program, 'u_ViewMatrix');
+
+let viewMatrix = new Matrix4();
+viewMatrix.lookAt(0, 0, 0, 0, 0, -1, 0, 1, 0)
+
 let modelMatrix = new Matrix4();
 
 tick();
