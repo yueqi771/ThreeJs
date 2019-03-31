@@ -3,7 +3,6 @@ import GameOver from '../pages/gameover.js'
 
 class GameView {
     constructor() {
-
     }
 
     initGamePage(callbacks) {
@@ -13,10 +12,13 @@ class GameView {
 
     initGameOver(callbacks) {
         this.gameOver = new GameOver(callbacks);
-        this.gameOver.init();
+        this.gameOver.init({
+            scene: this.gameStart.scene
+        });
     }
 
     showGameOverPage() {
+        debugger;
         this.GameOver.show();
         console.log('游戏结束了');
     }

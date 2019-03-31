@@ -5,14 +5,39 @@ class GameOver {
 
     }
 
-    init() {
+    init(options) {
         // canvas理论上是一张图片， 那么可以通过document.createElement('canvas')的方式来创建一个离屏canvas，将它复制到three.js的
         // 一个对象上， 通过空间的关系， 那么看到的效果就是2d的效果
-        this.initGameoverCanvas();
+        this.initGameoverCanvas(options);
     }
 
-    initGameoverCanvas() {
+    initGameoverCanvas(options) {
         const aspact = window.innerHeight / window.innerWidth;
+        this.scene = options.scene;
+        this.canvas = document.createElement('canvas');
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        // 纹理
+        this.texture = new THREE.Texture(this.canvas);
+        // 用纹理生成meterial
+        this.material = new THREE.MeshBasicMaterial({
+            map: this.texture,
+            transparent: true,
+            side: THREE.DoubleSide
+        })
+        // 几何图形
+        this.geometry = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight);
+        // 通过geometry和meterial生成一个THREE.js的网格
+        this.obj = new THREE.Mesh(this.geometry, this.material);
+        this.obj.position.z = 1;
+
+        // 绘制canvas的图像
+        this.context = this.canvas.getContext('2d');
+        this.context.fillStyle = "#333";
+        this.context.fillRect(window.innerWidth - 200 / 2, window.innerHeight - 100 / 2, 200, 100);
+        // 刷新texture
+        this.texture.needsUpdate = true;
+        this.scene.add(this.obj)
     }
 
     show() {

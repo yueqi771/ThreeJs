@@ -18,6 +18,9 @@ class GameStart {
         let scene = new THREE.Scene(),
             camera = new THREE.OrthographicCamera(-width / 2, width / 2, height /2, -height / 2, -1000, 10000);
 
+        this.scene = scene;
+
+
         renderer.setClearColor(new THREE.Color(0x000000));
         renderer.setSize(400, 400);
 
@@ -36,12 +39,12 @@ class GameStart {
             side: THREE.DoubleSide,
         })
 
-        let mesh = new THREE.Mesh(geometry, material);
-        mesh.position.x = 0;
-        mesh.position.y = 0;
-        mesh.position.z = 1;
+        // let mesh = new THREE.Mesh(geometry, material);
+        // mesh.position.x = 0;
+        // mesh.position.y = 0;
+        // mesh.position.z = 1;
 
-        scene.add(mesh);
+        // scene.add(mesh);
 
         camera.position.x = 0;
         camera.position.y = 0;
@@ -60,7 +63,7 @@ class GameStart {
 
         let render = function() {
             animate();
-            mesh.rotation.set(0, currentAngle, 0);
+            // mesh.rotation.set(0, currentAngle, 0);
             renderer.render(scene, camera);
             requestAnimationFrame(render)
         }
