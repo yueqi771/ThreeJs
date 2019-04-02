@@ -11,7 +11,7 @@ class Main {
     }
 
     static init() {
-         game.init();
+        game.init();
     }
 }
 

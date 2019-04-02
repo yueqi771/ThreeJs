@@ -6,8 +6,8 @@ class GameStart {
 
     init() {
         console.log('game is init')
-        let width = 400,
-            height = 400;
+        let width = window.innerWidth,
+            height = window.innerHeight;
             
         // let canvas = document.getElementById('canvas');
         let renderer = new THREE.WebGLRenderer({
@@ -39,12 +39,14 @@ class GameStart {
             side: THREE.DoubleSide,
         })
 
-        // let mesh = new THREE.Mesh(geometry, material);
-        // mesh.position.x = 0;
-        // mesh.position.y = 0;
-        // mesh.position.z = 1;
+        let mesh = new THREE.Mesh(geometry, material);
+        mesh.position.x = 0;
+        mesh.position.y = 0;
+        mesh.position.z = 1;
 
         // scene.add(mesh);
+        var axesHelper = new THREE.AxesHelper( 100 );
+        scene.add( axesHelper )
 
         camera.position.x = 0;
         camera.position.y = 0;
@@ -63,7 +65,7 @@ class GameStart {
 
         let render = function() {
             animate();
-            // mesh.rotation.set(0, currentAngle, 0);
+            mesh.rotation.set(0, currentAngle, 0);
             renderer.render(scene, camera);
             requestAnimationFrame(render)
         }

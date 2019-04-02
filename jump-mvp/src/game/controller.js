@@ -10,7 +10,6 @@ class GameController {
 
     initPages() {
         const _this = this;
-        debugger;
         const gamePageCallbacks = {
             showGameOverPage: () => {
                 this.gameView.showGameOverPage()
