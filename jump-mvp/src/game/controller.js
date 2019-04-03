@@ -1,10 +1,23 @@
 import gameView from './view';
-// import gameModel from './model';
+import gameModel from './model';
 
 class GameController {
     constructor() {
         this.gameView = gameView;
-        // this.gameModel = gameView;
+        this.gameModel = gameModel;
+        this.gameModel.stageChange.attach((sender, args) => {
+            const stageName = args.stage;
+            switch(stageName) {
+                case 'game-over':
+                    this.gameView.showGameOverPage();
+                    break;
+                case 'game-start': 
+                    this.gameView.showGamePage();
+                    break;
+                default:
+                    return;
+            }
+        })
 
     }
 
@@ -12,28 +25,19 @@ class GameController {
         const _this = this;
         const gamePageCallbacks = {
             showGameOverPage: () => {
-                this.gameView.showGameOverPage()
-            },
+                this.gameModel.setStage('game-over');
+            }
         }
 
         const gameOverCallbacks = {
             gameRestart: () => {
-                this.gameView.restartGame()
+                this.gameModel.setStage('game-start');
             }
         }
 
         this.gameView.initGamePage(gamePageCallbacks);
         this.gameView.initGameOver(gameOverCallbacks);
     }
-
-    showGameOverPage() {
-        this.gameView.showGameOverPage()
-    }
-
-    restartGame() {
-        this.gameView.restartGame()
-    }
-
 
 }
 

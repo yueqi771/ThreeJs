@@ -40,11 +40,12 @@ class GameStart {
         })
 
         let mesh = new THREE.Mesh(geometry, material);
+        this.mesh = mesh;
         mesh.position.x = 0;
         mesh.position.y = 0;
         mesh.position.z = 1;
 
-        // scene.add(mesh);
+        scene.add(mesh);
         var axesHelper = new THREE.AxesHelper( 100 );
         scene.add( axesHelper )
 
@@ -71,7 +72,14 @@ class GameStart {
         }
 
         render();
+    }
 
+    show() {
+        this.mesh.visible = true;
+    }
+
+    hide() {
+        this.mesh.visible = false;
     }
 
     restart() {

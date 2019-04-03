@@ -42,11 +42,17 @@ class GameOver {
         this.context.fillText('Game Over', (window.innerWidth - 200) / 2 + 50 , (window.innerHeight - 100) / 2 + 55) ;
         // 将文字进行旋转
         this.texture.needsUpdate = true;
+        this.obj.visible = false;
         this.scene.add(this.obj);
     }
 
     show() {
+        this.obj.visible = true;
         console.log('game over show')
+    }
+
+    hide() {
+        this.obj.visible = false;
     }
 }
 
