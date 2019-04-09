@@ -8,7 +8,15 @@ class GameStart {
 
     init() {
         console.log('game init page show');
+        this.scene = scene;
+        this.scene.init();
+        this.render();
         
+    }
+
+    render() {
+        this.scene.render();
+        requestAnimationFrame(this.render.bind(this));
     }
 
     show() {

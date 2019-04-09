@@ -43,7 +43,7 @@ class GameOver {
         // 将文字进行旋转
         this.texture.needsUpdate = true;
         this.obj.visible = false;
-        this.scene.add(this.obj);
+        // this.scene.add(this.obj);
     }
 
     show() {
