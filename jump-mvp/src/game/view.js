@@ -18,7 +18,8 @@ class GameView {
     }
 
     showGameOverPage() {
-        this.GameOver.show();
+        this.gameStart.hide();
+        this.gameOver.show();
         console.log('游戏结束了');
     }
 

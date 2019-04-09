@@ -10,7 +10,7 @@ class Event {
 
     notify(args) {
         for(var i = 0; i < this._listeners.length; i++ ){
-            this._listeners[i](sender, args)
+            this._listeners[i](this._sender, args)
         }
     }
 }
