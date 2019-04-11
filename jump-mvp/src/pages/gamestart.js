@@ -1,4 +1,6 @@
 import { scene } from '../scene/index';
+import Cuboid from '../block/cuboid';
+import Cylinder from '../block/cylinder';
 
 class GameStart {
 
@@ -10,8 +12,16 @@ class GameStart {
         console.log('game init page show');
         this.scene = scene;
         this.scene.init();
+        this.addBlock();
         this.render();
         
+    }
+
+    addBlock() {
+        const cuboldBlock = new Cuboid(-15, 0, 0);
+        const cylinderBlock = new Cylinder(23, 0, 0);
+        this.scene.instance.add(cuboldBlock.instance);
+        this.scene.instance.add(cylinderBlock.instance);
     }
 
     render() {

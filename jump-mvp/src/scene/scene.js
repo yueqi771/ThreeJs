@@ -8,7 +8,7 @@ class Scene {
         this.instance = new THREE.Scene();
         const renderer = this.renderer = new THREE.WebGLRenderer({
             canvas: canvas,
-            antilias: true, // 抗掉锯齿效果
+            antialias: true, // 抗掉锯齿效果
             preserveDrawingBuffer: true
         })
 
