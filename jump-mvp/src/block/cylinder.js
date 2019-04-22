@@ -8,7 +8,7 @@ class Cylinder extends BaseBlock {
         const size = width || this.width;
         const geometry = new THREE.CylinderGeometry(size / 2, size / 2 , this.height, 120);
         // 材质
-        const material = new THREE.MeshBasicMaterial({
+        const material = new THREE.MeshPhongMaterial({
             color: 0xffffff,
         });
 
