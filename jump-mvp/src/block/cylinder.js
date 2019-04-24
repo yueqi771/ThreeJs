@@ -13,10 +13,17 @@ class Cylinder extends BaseBlock {
         });
 
         this.instance = new THREE.Mesh(geometry, material);
+
+        // 允许接受光源阴影
+        this.instance.receiveShadow = true;
         this.instance.name = 'block';
         this.x = x;
         this.y = y;
         this.z = z;
+
+        // 允许投射阴影
+        this.instance.castShadow = true;
+
         this.instance.position.x = this.x;
         this.instance.position.y = this.y;
         this.instance.position.z = this.z;
