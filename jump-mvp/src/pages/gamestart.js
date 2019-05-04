@@ -21,7 +21,31 @@ class GameStart {
         this.addBlock();
         this.addGround();
         this.addBottle();
+        // 添加touch事件
+        this.bindTouchEvent()
         this.render();
+
+        
+    }
+
+    // 添加touch事件
+    bindTouchEvent() {
+        canvas.addEventListener('touchstart', this.touchStartCallback);
+        canvas.addEventListener('touchend', this.touchEndCallback);
+    }
+
+    // 移除touch事件
+    removeTouchEvent() {
+        canvas.removeEventListener('touchstart', this.touchStartCallback);
+        canvas.removeEventListener('touchend', this.touchEndCallback);
+    }
+
+    touchStartCallback() {
+        console.log('touch start callback')
+    }
+
+    touchEndCallback() {
+        console.log('touch end callback')
     }
 
     // 添加地面
