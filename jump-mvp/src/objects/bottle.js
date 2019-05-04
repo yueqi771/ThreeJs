@@ -1,5 +1,6 @@
 import bottleConfig from '../../config/bottle.config';
 import blockConfig from '../../config/block.config';
+import { customAnimation } from '../../lib/animation'
 
 class Bottle {
     constructor(x, y, z) {
@@ -12,7 +13,7 @@ class Bottle {
         // 存放bottle的整体
         this.obj = new THREE.Object3D();
         this.obj.name = 'bottle';
-        this.obj.position.set(bottleConfig.initPosition.x, bottleConfig.initPosition.y + blockConfig.height / 2, bottleConfig.initPosition.z)
+        this.obj.position.set(bottleConfig.initPosition.x, bottleConfig.initPosition.y + 30, bottleConfig.initPosition.z)
         
         const { specularMaterial,  middleMaterial, bottomMaterial } = this.loadTexture();
         // 存储瓶子的组合
@@ -108,7 +109,18 @@ class Bottle {
         }
     }
 
+    // 更新瓶子的动作
+    update() {
+        this.head.rotation.y += 0.06;
+    }
 
+    showup() {
+        customAnimation.to(0.5, this.obj.position,  {
+            x: bottleConfig.initPosition.x, 
+            y: bottleConfig.initPosition.y + blockConfig.height / 2, 
+            z: bottleConfig.initPosition.z
+        }, 'BounceEaseOut')
+    }
 }
 
 export default new Bottle();

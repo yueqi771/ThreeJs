@@ -11,6 +11,8 @@
 	"libVersion": "1.9.94",
 	"appid": "wx57626f75b939b739",
 	"projectname": "jump-mvp",
+	"simulatorType": "wechat",
+	"simulatorPluginLibVersion": {},
 	"condition": {
 		"search": {
 			"current": -1,

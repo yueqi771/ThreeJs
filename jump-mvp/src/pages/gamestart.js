@@ -22,12 +22,11 @@ class GameStart {
         this.addGround();
         this.addBottle();
         this.render();
-        
     }
 
     // 添加地面
     addGround() {
-        this.scene.instance.add(this.ground.instance)
+        this.scene.instance.add(this.ground.instance);
     }
 
     addBlock() {
@@ -39,6 +38,9 @@ class GameStart {
 
     render() {
         this.scene.render();
+        if(this.bottle) {
+            this.bottle.update()
+        }
         requestAnimationFrame(this.render.bind(this));
     }
 
@@ -57,6 +59,8 @@ class GameStart {
     // 添加bottle（瓶子）
     addBottle() {
         this.scene.instance.add(this.bottle.obj);
+        this.bottle.showup();
+
     }
 }
 
