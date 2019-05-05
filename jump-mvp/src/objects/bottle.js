@@ -4,6 +4,11 @@ import { customAnimation } from '../../lib/animation'
 
 class Bottle {
     constructor(x, y, z) {
+        // 瓶子延x轴进行旋转跳跃
+        this.direction = 0;
+
+        // 跳跃的轴坐标
+        this.axis = null;
     }
 
     init() {
@@ -18,6 +23,9 @@ class Bottle {
         const { specularMaterial,  middleMaterial, bottomMaterial } = this.loadTexture();
         // 存储瓶子的组合
         this.bottle = new THREE.Object3D();
+
+        // 瓶子的上层控制, 专门来控制动画
+        this.human = new THREE.Object3D();
 
         // 计算菱形头部的大小
         let headRadius = bottleConfig.headRadius;
@@ -73,8 +81,10 @@ class Bottle {
         this.head.position.x = 0;
         this.head.position.z = 0;
             
-        this.bottle.add(this.head);
-        this.bottle.add(this.body);
+        this.human.add(this.head);
+        this.human.add(this.body);
+
+        this.bottle.add(this.human);
 
         this.bottle.position.y = 2.2;
         this.bottle.position.z = 0;
@@ -120,6 +130,29 @@ class Bottle {
             y: bottleConfig.initPosition.y + blockConfig.height / 2, 
             z: bottleConfig.initPosition.z
         }, 'BounceEaseOut')
+    }
+
+    setDirection(direction, axis) {
+        this.direction = direction;
+        this.axis = axis;
+    }
+
+    // 瓶子旋转方法
+    rotate() {
+        const scale = 1.4;
+        this.human.rotation.x = this.human.rotation.z = 0;
+        // x
+        if(this.direction == 0) {
+            customAnimation.to(this.human.rotation, 0.14, { z: this.human.rotation.z - Math.PI });
+            customAnimation.to(this.human.rotation, 0.18, { z: this.human.rotation.z - 2 * Math.PI }, 'Linear', 0.14);
+            customAnimation.to(this.head.position, 0.1, { y: this.head.position.y + 0.9 * scale, x: this.head.position.x + 0.45 * scale });
+            customAnimation.to(this.head.position, 0.1, { y: this.head.position.y - 0.9 * scale, x: this.head.position.x - 0.45 * scale, delay: 0.1});
+            customAnimation.to(this.head.position, 0.15, { y: 7.56, x: 0, delay: 0.25 })
+            
+            customAnimation.to(this.body.scale, 0.1, { y: Math.max(scale, 1), x: Math.max(Math.min(1 / scale, 1), 0.7), z: Math.max(Math.min(1 / scale, 1), 0.7) })
+            customAnimation.to(this.body.scale, 0.1, { y: Math.min(0.9 / scale, 0.7), x: Math.max(scale, 1.2), z: Math.max(scale, 1.2), delay: 0.1 })
+            customAnimation.to(this.body.scale, 0.3, { y: 1, x: 1, z: 1, delay: 0.2 })
+        }
     }
 }
 

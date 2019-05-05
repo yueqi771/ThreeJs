@@ -12,19 +12,16 @@ import Tween from './tween';
 
 export const customAnimation = exports.customAnimation = {};
 
-customAnimation.to = function(duration, from, to, type, ) {
-    // debugger;
-    // let keys = Object.keys(from);
-    // keys.forEach(key => {
-    //     tweenAnimation(from[key], to[key], duration, type, (value) => {
-    //         from[key] = value
-    //     })
-    // })
-
+customAnimation.to = function(duration, from, to, type, deley) {
     for(let key in from) {
-        tweenAnimation(from[key], to[key], duration, type, (value) => {
-            from[key] = value
-        })
+        setTimeout((prop) => {
+            return function(prop) {
+                tweenAnimation(from[key], to[key], duration, type, (value, complete) => {
+                    from[key] = value
+                })
+            }(prop)
+        }, deley * 1000)
+        
     }
 }
 
