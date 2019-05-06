@@ -41,11 +41,12 @@ class GameStart {
     }
 
     touchStartCallback() {
-        this.bottle.rotate();
         console.log('touch start callback')
     }
 
     touchEndCallback() {
+        // debugger;
+        this.bottle.rotate();
         console.log('touch end callback')
     }
 

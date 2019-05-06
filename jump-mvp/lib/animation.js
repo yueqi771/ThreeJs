@@ -14,13 +14,13 @@ export const customAnimation = exports.customAnimation = {};
 
 customAnimation.to = function(duration, from, to, type, deley) {
     for(let key in from) {
-        setTimeout((prop) => {
-            return function(prop) {
+        setTimeout(function (key) {
+            return function() {
                 tweenAnimation(from[key], to[key], duration, type, (value, complete) => {
                     from[key] = value
                 })
-            }(prop)
-        }, deley * 1000)
+            }
+        }(key), deley * 1000)
         
     }
 }
@@ -31,7 +31,7 @@ customAnimation.to = function(duration, from, to, type, deley) {
     let start = -1,
         startTime = Date.now(),
         lastTime = Date.now();
-
+    
     const tweenFn = Tween[type];
     const options = {
         callback: function() {},
@@ -64,7 +64,7 @@ customAnimation.to = function(duration, from, to, type, deley) {
             return
         }
 
-        if(interval >= 30) {
+        if(interval >= 16) {
             // 绘制下一帧
             start ++ ;
         }else {
@@ -74,6 +74,7 @@ customAnimation.to = function(duration, from, to, type, deley) {
             start = start + _start
         }
         const value = tweenFn(start, from, to - from, frameCount);
+        // console.log(interval, from,  frameCount)
 
         if(start <= frameCount) {
             // 动画继续
@@ -83,10 +84,11 @@ customAnimation.to = function(duration, from, to, type, deley) {
             // 动画结束
             options.callback(to, true)
         }
+
+        requestAnimationFrame(step);
         
         lastTime = Date.now();
 
-        // requestAnimationFrame(step)
     }
 
     step()
