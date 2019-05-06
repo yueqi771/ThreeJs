@@ -32,6 +32,7 @@ customAnimation.to = function(duration, from, to, type, deley) {
         startTime = Date.now(),
         lastTime = Date.now();
     
+        console.log()
     const tweenFn = Tween[type];
     const options = {
         callback: function() {},
