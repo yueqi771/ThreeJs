@@ -30,17 +30,18 @@ class GameStart {
 
     // 添加touch事件
     bindTouchEvent() {
-        canvas.addEventListener('touchstart', this.touchStartCallback);
-        canvas.addEventListener('touchend', this.touchEndCallback);
+        canvas.addEventListener('touchstart', this.touchStartCallback.bind(this));
+        canvas.addEventListener('touchend', this.touchEndCallback.bind(this));
     }
 
     // 移除touch事件
     removeTouchEvent() {
-        canvas.removeEventListener('touchstart', this.touchStartCallback);
-        canvas.removeEventListener('touchend', this.touchEndCallback);
+        canvas.removeEventListener('touchstart', this.touchStartCallback.bind(this));
+        canvas.removeEventListener('touchend', this.touchEndCallback.bind(this));
     }
 
     touchStartCallback() {
+        this.bottle.rotate();
         console.log('touch start callback')
     }
 

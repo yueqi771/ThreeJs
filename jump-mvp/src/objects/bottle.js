@@ -145,13 +145,14 @@ class Bottle {
         if(this.direction == 0) {
             customAnimation.to(this.human.rotation, 0.14, { z: this.human.rotation.z - Math.PI });
             customAnimation.to(this.human.rotation, 0.18, { z: this.human.rotation.z - 2 * Math.PI }, 'Linear', 0.14);
+
             customAnimation.to(this.head.position, 0.1, { y: this.head.position.y + 0.9 * scale, x: this.head.position.x + 0.45 * scale });
-            customAnimation.to(this.head.position, 0.1, { y: this.head.position.y - 0.9 * scale, x: this.head.position.x - 0.45 * scale, delay: 0.1});
-            customAnimation.to(this.head.position, 0.15, { y: 7.56, x: 0, delay: 0.25 })
-            
+            customAnimation.to(this.head.position, 0.1, { y: this.head.position.y - 0.9 * scale, x: this.head.position.x - 0.45 * scale}, 'Linear', 0.1);
+            customAnimation.to(this.head.position, 0.15, { y: 7.56, x: 0 },  'Linear', 0.25)
+
             customAnimation.to(this.body.scale, 0.1, { y: Math.max(scale, 1), x: Math.max(Math.min(1 / scale, 1), 0.7), z: Math.max(Math.min(1 / scale, 1), 0.7) })
-            customAnimation.to(this.body.scale, 0.1, { y: Math.min(0.9 / scale, 0.7), x: Math.max(scale, 1.2), z: Math.max(scale, 1.2), delay: 0.1 })
-            customAnimation.to(this.body.scale, 0.3, { y: 1, x: 1, z: 1, delay: 0.2 })
+            customAnimation.to(this.body.scale, 0.1, { y: Math.min(0.9 / scale, 0.7), x: Math.max(scale, 1.2), z: Math.max(scale, 1.2)}, 'Linear', 0.1)
+            customAnimation.to(this.body.scale, 0.3, { y: 1, x: 1, z: 1 }, 'Linear',  0.2 )
         }
     }
 }

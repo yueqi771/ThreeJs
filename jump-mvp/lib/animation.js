@@ -74,7 +74,6 @@ customAnimation.to = function(duration, from, to, type, deley) {
             start = start + _start
         }
         const value = tweenFn(start, from, to - from, frameCount);
-        console.log(interval, start, frameCount)
 
         if(start <= frameCount) {
             // 动画继续
