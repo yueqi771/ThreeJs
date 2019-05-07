@@ -13,14 +13,17 @@ import Tween from './tween';
 export const customAnimation = exports.customAnimation = {};
 
 customAnimation.to = function(duration, from, to, type, deley) {
-    console.log(from)
+   
     for(let key in from) {
         setTimeout(function (key) {
             return function() {
+                if((to[key] === undefined)){ return }
                 tweenAnimation(from[key], to[key], duration, type, (value, complete) => {
-                    // console.log(value)
-                    // debugger;
-                    from[key] = value
+                    from[key] = value;
+                    if(complete) {
+                        return;
+                    }
+                    console.log(from[key])
                 })
             }
         }(key), deley * 1000)
@@ -30,7 +33,7 @@ customAnimation.to = function(duration, from, to, type, deley) {
 
 // duration unit second
  function tweenAnimation(from, to, duration, type, callback) {
-    const frameCount = duration * 1000 / 17;
+    const frameCount = Math.ceil(duration * 1000 / 17);
     let start = -1,
         startTime = Date.now(),
         lastTime = Date.now();
@@ -55,7 +58,7 @@ customAnimation.to = function(duration, from, to, type, deley) {
 
     const tweenFn = Tween[options.type];
 
-    const step = function () {
+    const step = function step() {
         const currentTime = Date.now();
         // 间隔时间
         const interval = currentTime - lastTime;
@@ -67,8 +70,14 @@ customAnimation.to = function(duration, from, to, type, deley) {
             requestAnimationFrame(step);
             return
         }
+        lastTime = currentTime;
 
-        if(interval >= 16) {
+        if(interval > 100) {
+            requestAnimationFrame(step);
+            return;
+        }
+
+        if(fps >= 14) {
             // 绘制下一帧
             start ++ ;
         }else {
@@ -78,7 +87,6 @@ customAnimation.to = function(duration, from, to, type, deley) {
             start = start + _start
         }
         const value = tweenFn(start, from, to - from, frameCount);
-        // console.log(interval, from,  frameCount)
 
         if(start <= frameCount) {
             // 动画继续
@@ -89,9 +97,8 @@ customAnimation.to = function(duration, from, to, type, deley) {
             options.callback(to, true)
         }
 
-        requestAnimationFrame(step);
+        // requestAnimationFrame(step);
         
-        lastTime = Date.now();
 
     }
 

@@ -36,8 +36,8 @@ class GameStart {
 
     // 移除touch事件
     removeTouchEvent() {
-        canvas.removeEventListener('touchstart', this.touchStartCallback.bind(this));
-        canvas.removeEventListener('touchend', this.touchEndCallback.bind(this));
+        canvas.removeEventListener('touchstart', this.touchStartCallback);
+        canvas.removeEventListener('touchend', this.touchEndCallback);
     }
 
     touchStartCallback() {
