@@ -17,10 +17,15 @@ customAnimation.to = function(duration, from, to, type, deley) {
     for(let key in from) {
         setTimeout(function (key) {
             return function() {
+            if((to[key] === undefined)){ return }
                 tweenAnimation(from[key], to[key], duration, type, (value, complete) => {
                     // console.log(value)
                     // debugger;
                     from[key] = value
+                    from[key] = value;
+                    if(complete) {
+                        return;
+                    }
                 })
             }
         }(key), deley * 1000)
