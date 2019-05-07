@@ -13,10 +13,13 @@ import Tween from './tween';
 export const customAnimation = exports.customAnimation = {};
 
 customAnimation.to = function(duration, from, to, type, deley) {
+    console.log(from)
     for(let key in from) {
         setTimeout(function (key) {
             return function() {
                 tweenAnimation(from[key], to[key], duration, type, (value, complete) => {
+                    // console.log(value)
+                    // debugger;
                     from[key] = value
                 })
             }
@@ -32,8 +35,6 @@ customAnimation.to = function(duration, from, to, type, deley) {
         startTime = Date.now(),
         lastTime = Date.now();
     
-        console.log()
-    const tweenFn = Tween[type];
     const options = {
         callback: function() {},
         type: 'Linear',
@@ -51,6 +52,8 @@ customAnimation.to = function(duration, from, to, type, deley) {
     if(duration) {
         options.duration = duration
     }
+
+    const tweenFn = Tween[options.type];
 
     const step = function () {
         const currentTime = Date.now();

@@ -140,19 +140,20 @@ class Bottle {
     // 瓶子旋转方法
     rotate() {
         const scale = 1.4;
-        this.human.rotation.x = this.human.rotation.z = 0;
+        // this.human.rotation.x = this.human.rotation.z = 0;
+        this.human.rotation.z = 0;
         // x
         if(this.direction == 0) {
             customAnimation.to( 0.14, this.human.rotation, { z: this.human.rotation.z - Math.PI });
             customAnimation.to( 0.18, this.human.rotation, { z: this.human.rotation.z - 2 * Math.PI }, 'Linear', 0.14);
 
-            customAnimation.to( 0.1,  this.head.position, { y: this.head.position.y + 0.9 * scale, x: this.head.position.x + 0.45 * scale });
-            customAnimation.to( 0.1,  this.head.position, { y: this.head.position.y - 0.9 * scale, x: this.head.position.x - 0.45 * scale}, 'Linear', 0.1);
-            customAnimation.to( 0.15, this.head.position, { y: 7.56, x: 0 },  'Linear', 0.25)
+            // customAnimation.to( 0.1,  this.head.position, { y: this.head.position.y + 0.9 * scale, x: this.head.position.x + 0.45 * scale });
+            // customAnimation.to( 0.1,  this.head.position, { y: this.head.position.y - 0.9 * scale, x: this.head.position.x - 0.45 * scale}, 'Linear', 0.1);
+            // customAnimation.to( 0.15, this.head.position, { y: 7.56, x: 0 },  'Linear', 0.25)
 
-            customAnimation.to(0.1, this.body.scale,  { y: Math.max(scale, 1), x: Math.max(Math.min(1 / scale, 1), 0.7), z: Math.max(Math.min(1 / scale, 1), 0.7) })
-            customAnimation.to(0.1, this.body.scale,  { y: Math.min(0.9 / scale, 0.7), x: Math.max(scale, 1.2), z: Math.max(scale, 1.2)}, 'Linear', 0.1)
-            customAnimation.to(0.3, this.body.scale,  { y: 1, x: 1, z: 1 }, 'Linear',  0.2 )
+            // customAnimation.to(0.1, this.body.scale,  { y: Math.max(scale, 1), x: Math.max(Math.min(1 / scale, 1), 0.7), z: Math.max(Math.min(1 / scale, 1), 0.7) })
+            // customAnimation.to(0.1, this.body.scale,  { y: Math.min(0.9 / scale, 0.7), x: Math.max(scale, 1.2), z: Math.max(scale, 1.2)}, 'Linear', 0.1)
+            // customAnimation.to(0.3, this.body.scale,  { y: 1, x: 1, z: 1 }, 'Linear',  0.2 )
         }
     }
 }
