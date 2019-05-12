@@ -47,7 +47,7 @@ class GameStart {
     }
 
     touchEndCallback() {
-        this.currentBlock.stop()
+        this.currentBlock.rebound()
         this.bottle.stop();
         this.bottle.rotate();
         console.log('touch end callback')

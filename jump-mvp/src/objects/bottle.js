@@ -5,7 +5,7 @@ import { customAnimation } from '../../lib/animation'
 class Bottle {
     constructor(x, y, z) {
         // 瓶子延x轴进行旋转跳跃
-        this.direction = 0;
+        this.direction = 1;
 
         // 跳跃的轴坐标
         this.axis = null;
@@ -134,7 +134,7 @@ class Bottle {
         // 头部改变
         const HEAD_DELTA = 0.03;
 
-        this.scale = DELTA_SCALE; 
+        this.scale -= DELTA_SCALE; 
         this.scale = Math.max(MIN_SCALE, this.scale);
 
         // 当按压小于最小压缩数值的时候， 停止动画
@@ -144,13 +144,15 @@ class Bottle {
 
         this.body.scale.y = this.scale;
         this.body.scale.x += HORIZON_DELTA_SCALE;
-        this.body.scale.z =+ HORIZON_DELTA_SCALE;
+        this.body.scale.z += HORIZON_DELTA_SCALE;
         this.head.position.y -= HEAD_DELTA;
 
-
+        // bottle跟随砖块一起收缩
+        const deltaY = blockConfig.height * DELTA_SCALE / 2;
         const bottleDeltaY = HEAD_DELTA / 2;
-        // 重心向下移
-        this.obj.position.y -= bottleDeltaY;
+        // // 重心向下移
+        this.obj.position.y = this.obj.position.y - (bottleDeltaY + deltaY * 2);
+
         // console.log(this.obj.position.y)
 
     }
@@ -166,11 +168,12 @@ class Bottle {
     }
 
     showup() {
-        customAnimation.to(0.5, this.obj.position,  {
+        customAnimation.to(this.obj.position, 0.5, {
             x: bottleConfig.initPosition.x, 
             y: bottleConfig.initPosition.y + blockConfig.height / 2, 
-            z: bottleConfig.initPosition.z
-        }, 'BounceEaseOut')
+            z: bottleConfig.initPosition.z,
+            ease: 'Bounce.easeOut'
+        })
     }
 
     setDirection(direction, axis) {
@@ -194,16 +197,26 @@ class Bottle {
         this.human.rotation.z = 0;
         // x
         if(this.direction == 0) {
-            customAnimation.to( 0.14, this.human.rotation, { z: this.human.rotation.z - Math.PI });
-            customAnimation.to( 0.18, this.human.rotation, { z: this.human.rotation.z - 2 * Math.PI }, 'Linear', 0.14);
+            customAnimation.to( this.human.rotation, 0.14, { z: this.human.rotation.z - Math.PI });
+            customAnimation.to( this.human.rotation, 0.18, { z: this.human.rotation.z - 2 * Math.PI, delay: 0.14});
 
-            customAnimation.to( 0.1,  this.head.position, { y: this.head.position.y + 0.9 * scale, x: this.head.position.x + 0.45 * scale });
-            customAnimation.to( 0.1,  this.head.position, { y: this.head.position.y - 0.9 * scale, x: this.head.position.x - 0.45 * scale}, 'Linear', 0.1);
-            customAnimation.to( 0.15, this.head.position, { y: 7.56, x: 0 },  'Linear', 0.25)
-
-            customAnimation.to(0.1, this.body.scale,  { y: Math.max(scale, 1), x: Math.max(Math.min(1 / scale, 1), 0.7), z: Math.max(Math.min(1 / scale, 1), 0.7) })
-            customAnimation.to(0.1, this.body.scale,  { y: Math.min(0.9 / scale, 0.7), x: Math.max(scale, 1.2), z: Math.max(scale, 1.2)}, 'Linear', 0.1)
-            customAnimation.to(0.3, this.body.scale,  { y: 1, x: 1, z: 1 }, 'Linear',  0.2 )
+            customAnimation.to(this.head.position,  0.1, { y: this.head.position.y + 0.9 * scale, x: this.head.position.x + 0.45 * scale });
+            customAnimation.to(this.head.position,  0.1, { y: this.head.position.y - 0.9 * scale, x: this.head.position.x - 0.45 * scale, delay: 0.1});
+            customAnimation.to(this.head.position, 0.15, { y: 7.56, x: 0, delay: 0.25 })
+            customAnimation.to(this.body.scale, 0.1, { y: Math.max(scale, 1), x: Math.max(Math.min(1 / scale, 1), 0.7), z: Math.max(Math.min(1 / scale, 1), 0.7) })
+            customAnimation.to(this.body.scale, 0.1, { y: Math.min(0.9 / scale, 0.7), x: Math.max(scale, 1.2), z: Math.max(scale, 1.2), delay: 0.1 })
+            customAnimation.to(this.body.scale, 0.3, { y: 1, x: 1, z: 1, delay: 0.2 })
+        }else if(this.direction == 1){ // z
+            customAnimation.to(this.human.rotation, 0.14, { x: this.human.rotation.x - Math.PI })
+            customAnimation.to(this.human.rotation, 0.18, { x: this.human.rotation.x - 2 * Math.PI, delay: 0.14 })
+            
+            customAnimation.to(this.head.position, 0.1, { y: this.head.position.y + 0.9 * scale, z: this.head.position.z - 0.45 * scale })
+            customAnimation.to(this.head.position, 0.1, { z: this.head.position.z + 0.45 * scale, y: this.head.position.y - 0.9 * scale, delay: 0.1 })
+            customAnimation.to(this.head.position, 0.15, { y: 7.56, z: 0, delay: 0.25 })
+            
+            customAnimation.to(this.body.scale, 0.05, { y: Math.max(scale, 1), x: Math.max(Math.min(1 / scale, 1), 0.7), z: Math.max(Math.min(1 / scale, 1), 0.7) })
+            customAnimation.to(this.body.scale, 0.05, { y: Math.min(0.9 / scale, 0.7), x: Math.max(scale, 1.2), z: Math.max(scale, 1.2), delay: 0.1 })
+            customAnimation.to(this.body.scale, 0.2, { y: 1, x: 1, z: 1, delay: 0.2 })
         }
     }
 }
