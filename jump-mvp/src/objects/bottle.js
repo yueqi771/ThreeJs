@@ -9,6 +9,11 @@ class Bottle {
 
         // 跳跃的轴坐标
         this.axis = null;
+
+        // 瓶子当前状态
+        this.status = 'stop'
+
+        this.scale = 1;
     }
 
     init() {
@@ -119,9 +124,45 @@ class Bottle {
         }
     }
 
+    // 内部瓶子收缩
+    _shrink() {
+        // 设置压缩范围
+        const MIN_SCALE = 0.55;
+        // 水平
+        const HORIZON_DELTA_SCALE = 0.007;
+        const DELTA_SCALE = 0.005;
+        // 头部改变
+        const HEAD_DELTA = 0.03;
+
+        this.scale = DELTA_SCALE; 
+        this.scale = Math.max(MIN_SCALE, this.scale);
+
+        // 当按压小于最小压缩数值的时候， 停止动画
+        if(this.scale <= MIN_SCALE) {
+            return;
+        }
+
+        this.body.scale.y = this.scale;
+        this.body.scale.x += HORIZON_DELTA_SCALE;
+        this.body.scale.z =+ HORIZON_DELTA_SCALE;
+        this.head.position.y -= HEAD_DELTA;
+
+
+        const bottleDeltaY = HEAD_DELTA / 2;
+        // 重心向下移
+        this.obj.position.y -= bottleDeltaY;
+        // console.log(this.obj.position.y)
+
+    }
+
     // 更新瓶子的动作
     update() {
+        if(this.status === 'shrink') {
+            this._shrink();
+        }
+
         this.head.rotation.y += 0.06;
+        
     }
 
     showup() {
@@ -135,6 +176,15 @@ class Bottle {
     setDirection(direction, axis) {
         this.direction = direction;
         this.axis = axis;
+    }
+
+    shrink() {
+        this.status = "shrink"
+    }
+
+    stop() {
+        this.scale = 1;
+        this.status = "stop"
     }
 
     // 瓶子旋转方法

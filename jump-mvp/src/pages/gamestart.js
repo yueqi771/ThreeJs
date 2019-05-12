@@ -41,11 +41,14 @@ class GameStart {
     }
 
     touchStartCallback() {
-        console.log('touch start callback')
+        console.log('touch start callback');
+        this.currentBlock.shrink();
+        this.bottle.shrink();
     }
 
     touchEndCallback() {
-        // debugger;
+        this.currentBlock.stop()
+        this.bottle.stop();
         this.bottle.rotate();
         console.log('touch end callback')
     }
@@ -56,13 +59,17 @@ class GameStart {
     }
 
     addBlock() {
-        const cuboldBlock = new Cuboid(-15, 0, 0);
+        const cuboldBlock = this.currentBlock = new Cuboid(-15, 0, 0);
         const cylinderBlock = new Cylinder(23, 0, 0);
         this.scene.instance.add(cuboldBlock.instance);
         this.scene.instance.add(cylinderBlock.instance);
     }
 
     render() {
+        if(this.currentBlock) {
+            this.currentBlock.update()
+        }
+
         this.scene.render();
         if(this.bottle) {
             this.bottle.update()
