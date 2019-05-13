@@ -8,6 +8,7 @@ class GameStart {
 
     constructor(callbacks) {
         this.callbacks = callbacks;
+        this.targetPosition = {}; 
     }
 
     init() {
@@ -41,16 +42,39 @@ class GameStart {
     }
 
     touchStartCallback() {
-        console.log('touch start callback');
+        this.touchStartTime = Date.now();
         this.currentBlock.shrink();
         this.bottle.shrink();
     }
 
     touchEndCallback() {
+        this.touchEndTime = Date.now();
+        const duration = this.touchEndTime - this.touchStartTime;
+        
+        // 水平方向的速度
+        this.bottle.velocity.vx = Math.min(duration / 6, 400);
+        this.bottle.velocity.vx = +this.bottle.velocity.vx.toFixed(2);
+        this.bottle.velocity.vy = Math.min(150 + duration / 20, 400);
+        this.bottle.velocity.vy = +this.bottle.velocity.vy.toFixed(2);
+
         this.currentBlock.rebound()
         this.bottle.stop();
         this.bottle.rotate();
+        this.bottle.jump();
         console.log('touch end callback')
+    }
+
+    setDirection(direction) {
+        // bottle当前的位置
+        const currentPosition = {
+            x: this.bottle.obj.position.x,
+            z: this.bottle.obj.position.z,
+        }
+
+        // block当前的位置
+        this.axis =  new THREE.Vector3(this.targetPosition.x - currentPosition.x, 0, this.targetPosition.z - currentPosition.z)
+        // 将当前变量归一化
+        this.bottle.setDirection(direction, this.axis);
     }
 
     // 添加地面
@@ -61,8 +85,15 @@ class GameStart {
     addBlock() {
         const cuboldBlock = this.currentBlock = new Cuboid(-15, 0, 0);
         const cylinderBlock = new Cylinder(23, 0, 0);
+        this.targetPosition = {
+            x: 23,
+            y: 0,
+            z: 0
+        }
+        const initPosition = 0;
         this.scene.instance.add(cuboldBlock.instance);
         this.scene.instance.add(cylinderBlock.instance);
+        this.setDirection(initPosition)
     }
 
     render() {
