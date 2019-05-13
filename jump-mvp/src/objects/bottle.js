@@ -14,6 +14,9 @@ class Bottle {
         this.status = 'stop'
 
         this.scale = 1;
+
+        // 瓶子运动的总时间
+        flyingTime = 0;
     }
 
     init() {
@@ -124,6 +127,49 @@ class Bottle {
         }
     }
 
+    // 更新瓶子的动作
+    update() {
+        if(this.status === 'shrink') {
+            this._shrink();
+        }else if(this.status == 'jump') {
+            const tickTime = Date.now() - this.lastFrameTime;
+            this._jump(tickTime);
+        } 
+
+        this.head.rotation.y += 0.06;
+        this.lastFrameTime = Date.now();
+        
+    }
+
+    showup() {
+        customAnimation.to(this.obj.position, 0.5, {
+            x: bottleConfig.initPosition.x, 
+            y: bottleConfig.initPosition.y + blockConfig.height / 2, 
+            z: bottleConfig.initPosition.z,
+            ease: 'Bounce.easeOut'
+        })
+    }
+
+    setDirection(direction, axis) {
+        this.direction = direction;
+        this.axis = axis;
+    }
+
+    shrink() {
+        this.status = "shrink"
+    }
+
+    jump() {
+        this.status = 'jump'
+    }
+
+    stop() {
+        this.scale = 1;
+        this.flyingTime = 0;
+        this.status = "stop"
+    }
+
+
     // 内部瓶子收缩
     _shrink() {
         // 设置压缩范围
@@ -157,37 +203,9 @@ class Bottle {
 
     }
 
-    // 更新瓶子的动作
-    update() {
-        if(this.status === 'shrink') {
-            this._shrink();
-        }
+    _jump(tickTime) {
+        const t = tickTime / 1000;
 
-        this.head.rotation.y += 0.06;
-        
-    }
-
-    showup() {
-        customAnimation.to(this.obj.position, 0.5, {
-            x: bottleConfig.initPosition.x, 
-            y: bottleConfig.initPosition.y + blockConfig.height / 2, 
-            z: bottleConfig.initPosition.z,
-            ease: 'Bounce.easeOut'
-        })
-    }
-
-    setDirection(direction, axis) {
-        this.direction = direction;
-        this.axis = axis;
-    }
-
-    shrink() {
-        this.status = "shrink"
-    }
-
-    stop() {
-        this.scale = 1;
-        this.status = "stop"
     }
 
     // 瓶子旋转方法
