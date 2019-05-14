@@ -1,7 +1,7 @@
 import bottleConfig from '../../config/bottle.config';
 import blockConfig from '../../config/block.config';
 import { customAnimation } from '../../lib/animation'
-import g from '../../config/game-conf'
+import gameConfig from '../../config/game.config'
 
 class Bottle {
     constructor(x, y, z) {
@@ -19,7 +19,10 @@ class Bottle {
         // 瓶子运动的总时间
         this.flyingTime = 0;
 
-        this.velocity = {}
+        this.velocity = {
+            vx: 0, // 水平方向速度，
+            vy: 0 // 竖直方向速度
+        }
     }
 
     init() {
@@ -207,10 +210,11 @@ class Bottle {
     }
 
     _jump(tickTime) {
+        // debugger;
         const t = tickTime / 1000;
         this.flyingTime = this.flyingTime + t;
         this.translateH = this.velocity.vx * t;
-        this.translateY = this.velocity.vy * t - 0.5 * g * t * t - g * this.flyingTime * t;
+        this.translateY = this.velocity.vy * t - 0.5 * gameConfig.gravity * t * t - gameConfig.gravity * this.flyingTime * t;
         this.obj.translateY(this.translateY);
         this.obj.translateOnAxis(this.axis, this.translateH);
     }

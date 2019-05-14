@@ -60,7 +60,7 @@ class GameStart {
         this.currentBlock.rebound()
         this.bottle.stop();
         this.bottle.rotate();
-        this.bottle.jump();
+        this.bottle.jump(duration);
         console.log('touch end callback')
     }
 
@@ -74,6 +74,7 @@ class GameStart {
         // block当前的位置
         this.axis =  new THREE.Vector3(this.targetPosition.x - currentPosition.x, 0, this.targetPosition.z - currentPosition.z)
         // 将当前变量归一化
+        this.axis.normalize();
         this.bottle.setDirection(direction, this.axis);
     }
 

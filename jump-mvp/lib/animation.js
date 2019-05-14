@@ -145,7 +145,7 @@ const tweenAnimation = exports.tweenAnimation = function tweenAnimation(from, to
     
     if(isFunction(fnGetValue) == false) {
         console.error('没有找到名为' + options.easing + '的动画算法');
-        reutrn;
+        return;
     }
     
     let startTime = Date.now();
@@ -167,7 +167,7 @@ const tweenAnimation = exports.tweenAnimation = function tweenAnimation(from, to
         lastTime = currentTime;
         if(interval > 100) {
             requestAnimationFrame(step);
-            reutrn;
+            return;
         }
     
         if(fps >= 30) {
