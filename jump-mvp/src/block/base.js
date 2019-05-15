@@ -43,6 +43,24 @@ class BaseBlock {
         customAnimation.to(this.instance.scale,  0.5, {y: 1, ease: 'Elastic.easeOut'})
         customAnimation.to(this.instance.position,  0.5,  {y: 0, ease: 'Elastic.easeOut'})
     }
+
+    // 获取block的边缘距离
+    getVertices() {
+        const vertices = [];
+        const centerPosition = {
+            x: this.instance.position.x,
+            z: this.instance.position.z
+        }
+
+        vertices.push([centerPosition.x + this.width / 2, centerPosition.y + this.width / 2 ]);
+        vertices.push([centerPosition.x + this.width / 2, centerPosition.y - this.width / 2 ]);
+        vertices.push([centerPosition.x - this.width / 2, centerPosition.y + this.width / 2 ]);
+        vertices.push([centerPosition.x - this.width / 2, centerPosition.y - this.width / 2 ]);
+
+        return vertices;
+
+    }
+
 }
 
 export default BaseBlock;

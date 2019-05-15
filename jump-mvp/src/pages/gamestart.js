@@ -93,7 +93,7 @@ class GameStart {
 
     addBlock() {
         const cuboldBlock = this.currentBlock = new Cuboid(-15, 0, 0);
-        const cylinderBlock = new Cylinder(23, 0, 0);
+        const cylinderBlock = this.nextBlock = new Cylinder(23, 0, 0);
         this.targetPosition = {
             x: 23,
             y: 0,
@@ -151,7 +151,22 @@ class GameStart {
         const translate = new THREE.Vector2(this.axis.x, this.axis.z).setLength(bottle.velocity.vx * flyingTime);
         bottlePosition.add(translate);
         bottle.destination = [+bottlePosition.x.toFixed(2), +bottlePosition.y.toFixed(2)];
-        destination.push(+bottlePosition.x.toFixed(2), +bottlePosition.y.toFixed(2))
+        destination.push(+bottlePosition.x.toFixed(2), +bottlePosition.y.toFixed(2));
+
+        if(nextBlock) {
+            const nextDiff = Math.pow(destination[0] - nextBlock.instance.position.x) + Math.pow(destination[1] - nextBlock.instance.position.y);
+            
+            // nextblock的边缘
+            const nextPolygon = nextBlock.getVertices();
+
+            // 跳在currentBlock上和跳在nextBlock上
+            let result1;
+
+            // 判断当前的点是否在polygon里面
+            if(utils.pointInPolygon(destination, nextPolygon)) {
+                
+            }
+        }
     }
 }
 
