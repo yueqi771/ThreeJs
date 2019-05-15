@@ -205,12 +205,9 @@ class Bottle {
         // // 重心向下移
         this.obj.position.y = this.obj.position.y - (bottleDeltaY + deltaY * 2);
 
-        // console.log(this.obj.position.y)
-
     }
 
     _jump(tickTime) {
-        // debugger;
         const t = tickTime / 1000;
         this.flyingTime = this.flyingTime + t;
         this.translateH = this.velocity.vx * t;

@@ -3,6 +3,8 @@ import Cuboid from '../block/cuboid';
 import Cylinder from '../block/cylinder';
 import ground from '../objects/ground';
 import bottle from '../objects/bottle'
+import blockConfig from '../../config/block.config';
+import gameConfig from '../../config/game.config';
 
 class GameStart {
 
@@ -56,6 +58,12 @@ class GameStart {
         this.bottle.velocity.vx = +this.bottle.velocity.vx.toFixed(2);
         this.bottle.velocity.vy = Math.min(150 + duration / 20, 400);
         this.bottle.velocity.vy = +this.bottle.velocity.vy.toFixed(2);
+
+        // currentBlock 下压的距离
+        const initY = blockConfig.height - (1 - this.bottle.scale.y) * blockConfig.height;
+
+        // 碰撞监测
+        this.hit = this.getHitStatus(this.bottle, currentBlock, nextBlock, initY)
 
         this.currentBlock.rebound()
         this.bottle.stop();
@@ -126,6 +134,24 @@ class GameStart {
         this.scene.instance.add(this.bottle.obj);
         this.bottle.showup();
 
+    } 
+
+    // 瓶子碰撞监测
+    getHitStatus(bottle, currentBlock, nextBlock, initY) {
+        // 总时间
+        const flyingTime = bottle.valocity.vy / gameConfig.gravity * 2;
+        initY = initY || bottle.obj.position.y.toFixed(2);
+        let time = +((-bottle.velocity.vy + Math.sqrt(Math.pow(bottle.velocity.vy, 2) - 2 * initY * gameConfig.gravity)) / gameConfig.gravity).toFixed(2 )
+        flyingTime -= time;
+        flyingTime = +flyingTime.toFixed(2);
+
+        // 瓶子运动的距离
+        let destination = [];
+        const bottlePosition = new THREE.vector2(bottle.obj.position.x, bottle.obj.position.z);
+        const translate = new THREE.Vector2(this.axis.x, this.axis.z).setLength(bottle.velocity.vx * flyingTime);
+        bottlePosition.add(translate);
+        bottle.destination = [+bottlePosition.x.toFixed(2), +bottlePosition.y.toFixed(2)];
+        destination.push(+bottlePosition.x.toFixed(2), +bottlePosition.y.toFixed(2))
     }
 }
 
