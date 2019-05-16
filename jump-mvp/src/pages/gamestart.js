@@ -5,6 +5,8 @@ import ground from '../objects/ground';
 import bottle from '../objects/bottle'
 import blockConfig from '../../config/block.config';
 import gameConfig from '../../config/game.config';
+import bottleConfig from '../../config/bottle.config';
+import utils from '../utils/index'
 
 class GameStart {
 
@@ -138,6 +140,14 @@ class GameStart {
 
     // 瓶子碰撞监测
     getHitStatus(bottle, currentBlock, nextBlock, initY) {
+        // 跳跃后的状态
+        const HIT_NEXT_BLOCK_CENTER = 1;
+        const HIT_CURRENT_BLOCK = 2;
+        const GAME_OVER_NEXT_BLOCK_BACK = 3;
+        const GAME_OVER_CURRENT_BLOCK_BAKC = 4;
+        const GAME_OVER_NEXT_BLOCK_FRONT = 5;
+        const GAME_OVER_BOTH = 6;
+        const HIT_NEXT_BLOCK_NORMAL = 7;
         // 总时间
         const flyingTime = bottle.valocity.vy / gameConfig.gravity * 2;
         initY = initY || bottle.obj.position.y.toFixed(2);
@@ -153,6 +163,10 @@ class GameStart {
         bottle.destination = [+bottlePosition.x.toFixed(2), +bottlePosition.y.toFixed(2)];
         destination.push(+bottlePosition.x.toFixed(2), +bottlePosition.y.toFixed(2));
 
+        // 瓶子宽度
+        const bodyWitth = 1.8141 * bottleConfig.headRadius;
+        // 
+
         if(nextBlock) {
             const nextDiff = Math.pow(destination[0] - nextBlock.instance.position.x) + Math.pow(destination[1] - nextBlock.instance.position.y);
             
@@ -164,9 +178,30 @@ class GameStart {
 
             // 判断当前的点是否在polygon里面
             if(utils.pointInPolygon(destination, nextPolygon)) {
-                
+                if(Math.abs(nextDiff) < 5) {
+                    result1 = HIT_NEXT_BLOCK_CENTER;
+                }else {
+                    result1 = HIT_NEXT_BLOCK_NORMAL;
+                }
+            }else if(utils.pointInPolygon([destination[0] - bodyWitth / 2, destination[1]], nextPolygon) || utils.pointInPolygon([destination[0], destination[1] + bodyWitth / 2], nextPolygon)) {
+                result1 = GAME_OVER_CURRENT_BLOCK_BAKC;
+            }else if(utils.pointInPolygon([destination[0] + blockConfig.bodyWitth / 2, destination[1]], nextPolygon) || utils.pointInPolygon([destination[0], destination[1] - bottleConfig.bodyWitth / 2], nextPolygon)) {
+                result1 = GAME_OVER_NEXT_BLOCK_FRONT;
             }
         }
+
+        const currentPolygon = currentBlock.getVertices();
+        let result2;
+        if(utils.pointInPolygon(destination, currentPolygon)) {
+            result2 = HIT_CURRENT_BLOCK;
+        }else if(utils.pointInPolygon([destination[0] - bodyWitth / 2, destination[1]], currentPolygon) || utils.pointInPolygon([destination[0], destination[1] + bodyWitth / 2], currentPolygon)) {
+            if(result1) {
+                result2 = GAME_OVER_BOTH;
+            }
+            result2 = GAME_OVER_CURRENT_BLOCK_BAKC;
+        }
+
+        return result1 || result2 || 0
     }
 }
 
