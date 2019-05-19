@@ -8,11 +8,22 @@ import gameConfig from '../../config/game.config';
 import bottleConfig from '../../config/bottle.config';
 import utils from '../utils/index'
 
+// 跳跃后的状态
+const HIT_NEXT_BLOCK_CENTER = 1;
+const HIT_CURRENT_BLOCK = 2;
+const GAME_OVER_NEXT_BLOCK_BACK = 3;
+const GAME_OVER_CURRENT_BLOCK_BAKC = 4;
+const GAME_OVER_NEXT_BLOCK_FRONT = 5;
+const GAME_OVER_BOTH = 6;
+const HIT_NEXT_BLOCK_NORMAL = 7;
+
 class GameStart {
 
     constructor(callbacks) {
         this.callbacks = callbacks;
         this.targetPosition = {}; 
+        // 是否检测结束逻辑
+        this.checkingHit = false;
     }
 
     init() {
@@ -29,8 +40,6 @@ class GameStart {
         // 添加touch事件
         this.bindTouchEvent()
         this.render();
-
-        
     }
 
     // 添加touch事件
@@ -62,16 +71,83 @@ class GameStart {
         this.bottle.velocity.vy = +this.bottle.velocity.vy.toFixed(2);
 
         // currentBlock 下压的距离
-        const initY = blockConfig.height - (1 - this.bottle.scale.y) * blockConfig.height;
+        const initY = (1 - this.currentBlock.instance.scale.y) * blockConfig.height;
 
         // 碰撞监测
-        this.hit = this.getHitStatus(this.bottle, currentBlock, nextBlock, initY)
+        this.hit = this.getHitStatus(this.bottle, this.currentBlock, this.nextBlock, initY);
+        // console.log(this.hit)
+        this.checkingHit = true; 
 
         this.currentBlock.rebound()
         this.bottle.stop();
         this.bottle.rotate();
         this.bottle.jump(duration);
         console.log('touch end callback')
+    }
+
+    // 更新下一个砖块
+    updateNextBlock() {
+        const seed = Math.round(Math.random());
+        const type = seed ? 'cuboid' : 'cylinder';
+        // 0 => x 1=> y
+        const direction = Math.round(Math.random()); 
+        // 下一个block的宽度
+        const width = Math.round(Math.random() * 12) + 8;
+        // 下一个砖块的距离
+        const distance = Math.round(Math.random() * 20) + 20;
+        this.currentBlock = this.nextBlock;
+        // 下一个砖块的中心位置
+        const targetPosition = this.targetPosition = {};
+        if(direction == 0) {
+            targetPosition.x = this.currentBlock.instance.position.x + distance;
+            targetPosition.y = this.currentBlock.instance.position.y;
+            targetPosition.z = this.currentBlock.instance.position.z;
+        }else if(direction == 1) {
+            targetPosition.x = this.currentBlock.instance.position.x;
+            targetPosition.y = this.currentBlock.instance.position.y;
+            targetPosition.z = this.currentBlock.instance.position.z - distance;
+        }
+
+        this.setDirection(direction);
+        if(type == 'cuboid') {
+            this.nextBlock = new Cuboid(targetPosition.x, targetPosition.y, targetPosition.z, width);
+        }else {
+            this.nextBlock = new Cylinder(targetPosition.x, targetPosition.y, targetPosition.z, width);
+        }
+
+        // 添加到场景中
+        this.scene.instance.add(this.nextBlock.instance);
+        
+        const cameraTargetPosition = {
+            x: (this.currentBlock.instance.position.x + this.nextBlock.instance.position.x) / 2,
+            y: (this.currentBlock.instance.position.y + this.nextBlock.instance.position.y) / 2,
+            z: (this.currentBlock.instance.position.z + this.nextBlock.instance.position.z) / 2
+        }
+
+        this.scene.updateCameraPosition(cameraTargetPosition);
+        this.ground.updatePosition(cameraTargetPosition);
+    }
+
+    // 瓶子运动动画结束逻辑判断
+    checkBottleHit() {
+        if(this.bottle.obj.position.y <= blockConfig.height / 2 && this.bottle.status === 'jump' && this.bottle.flyingTime > 0.3) {
+            this.checkingHit = true;
+            if(this.hit == HIT_NEXT_BLOCK_CENTER || this.hit == HIT_NEXT_BLOCK_NORMAL || this.hit == HIT_CURRENT_BLOCK)  {
+                // 游戏继续
+                this.bottle.stop();
+                this.bottle.obj.position.y = blockConfig.height / 2;
+                this.bottle.obj.position.x = this.bottle.destination[0];
+                this.bottle.obj.position.z = this.bottle.destination[1];
+
+                // 渲染下一个砖块
+                if(this.hit == HIT_NEXT_BLOCK_CENTER || this.hit == HIT_NEXT_BLOCK_NORMAL) {
+                    this.updateNextBlock();
+                }
+            }else {
+                // game over
+                this.callbacks.showGameOverPage();
+            }
+        }
     }
 
     setDirection(direction) {
@@ -116,6 +192,10 @@ class GameStart {
         if(this.bottle) {
             this.bottle.update()
         }
+        // 是否开始检测结束逻辑
+        if(this.checkingHit) {
+            this.checkBottleHit();
+        }
         requestAnimationFrame(this.render.bind(this));
     }
 
@@ -135,29 +215,20 @@ class GameStart {
     addBottle() {
         this.scene.instance.add(this.bottle.obj);
         this.bottle.showup();
-
     } 
 
     // 瓶子碰撞监测
     getHitStatus(bottle, currentBlock, nextBlock, initY) {
-        // 跳跃后的状态
-        const HIT_NEXT_BLOCK_CENTER = 1;
-        const HIT_CURRENT_BLOCK = 2;
-        const GAME_OVER_NEXT_BLOCK_BACK = 3;
-        const GAME_OVER_CURRENT_BLOCK_BAKC = 4;
-        const GAME_OVER_NEXT_BLOCK_FRONT = 5;
-        const GAME_OVER_BOTH = 6;
-        const HIT_NEXT_BLOCK_NORMAL = 7;
         // 总时间
-        const flyingTime = bottle.valocity.vy / gameConfig.gravity * 2;
+        let flyingTime = parseFloat(bottle.velocity.vy) / parseFloat(gameConfig.gravity) * 2.0;
         initY = initY || bottle.obj.position.y.toFixed(2);
-        let time = +((-bottle.velocity.vy + Math.sqrt(Math.pow(bottle.velocity.vy, 2) - 2 * initY * gameConfig.gravity)) / gameConfig.gravity).toFixed(2 )
+        let time = +((bottle.velocity.vy - Math.sqrt(Math.pow(bottle.velocity.vy, 2) - 2 * initY * gameConfig.gravity)) / gameConfig.gravity).toFixed(2 )
         flyingTime -= time;
         flyingTime = +flyingTime.toFixed(2);
 
         // 瓶子运动的距离
         let destination = [];
-        const bottlePosition = new THREE.vector2(bottle.obj.position.x, bottle.obj.position.z);
+        const bottlePosition = new THREE.Vector2(bottle.obj.position.x, bottle.obj.position.z);
         const translate = new THREE.Vector2(this.axis.x, this.axis.z).setLength(bottle.velocity.vx * flyingTime);
         bottlePosition.add(translate);
         bottle.destination = [+bottlePosition.x.toFixed(2), +bottlePosition.y.toFixed(2)];
@@ -166,15 +237,14 @@ class GameStart {
         // 瓶子宽度
         const bodyWitth = 1.8141 * bottleConfig.headRadius;
         // 
+        let result1, result2;
 
+        // 和跳在nextBlock上
         if(nextBlock) {
-            const nextDiff = Math.pow(destination[0] - nextBlock.instance.position.x) + Math.pow(destination[1] - nextBlock.instance.position.y);
+            const nextDiff = Math.pow(destination[0] - nextBlock.instance.position.x, 2) + Math.pow(destination[1] - nextBlock.instance.position.y, 2);
             
             // nextblock的边缘
             const nextPolygon = nextBlock.getVertices();
-
-            // 跳在currentBlock上和跳在nextBlock上
-            let result1;
 
             // 判断当前的点是否在polygon里面
             if(utils.pointInPolygon(destination, nextPolygon)) {
@@ -189,18 +259,19 @@ class GameStart {
                 result1 = GAME_OVER_NEXT_BLOCK_FRONT;
             }
         }
-
-        const currentPolygon = currentBlock.getVertices();
-        let result2;
-        if(utils.pointInPolygon(destination, currentPolygon)) {
-            result2 = HIT_CURRENT_BLOCK;
-        }else if(utils.pointInPolygon([destination[0] - bodyWitth / 2, destination[1]], currentPolygon) || utils.pointInPolygon([destination[0], destination[1] + bodyWitth / 2], currentPolygon)) {
-            if(result1) {
-                result2 = GAME_OVER_BOTH;
+        // 跳在currentBlock上
+        if(currentBlock) {
+            const currentPolygon = currentBlock.getVertices();
+            if(utils.pointInPolygon(destination, currentPolygon)) {
+                result2 = HIT_CURRENT_BLOCK;
+            }else if(utils.pointInPolygon([destination[0] - bodyWitth / 2, destination[1]], currentPolygon) || utils.pointInPolygon([destination[0], destination[1] + bodyWitth / 2], currentPolygon)) {
+                if(result1) {
+                    result2 = GAME_OVER_BOTH;
+                }
+                result2 = GAME_OVER_CURRENT_BLOCK_BAKC;
             }
-            result2 = GAME_OVER_CURRENT_BLOCK_BAKC;
         }
-
+        
         return result1 || result2 || 0
     }
 }

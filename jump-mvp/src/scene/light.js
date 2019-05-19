@@ -1,4 +1,5 @@
 
+import { customAnimation } from '../../lib/animation'
 class Light {
     constructor() {
         this.instances = {}
@@ -6,7 +7,7 @@ class Light {
 
     init() {
         const ambienLight = new THREE.AmbientLight(0xffffff, 0.8);
-        const shadowLight = new THREE.DirectionalLight(0xffffff, 0.3);
+        const shadowLight = this.shadowLight = new THREE.DirectionalLight(0xffffff, 0.3);
 
         shadowLight.position.set(10, 30, 20);
 
@@ -37,6 +38,12 @@ class Light {
         this.instances.shadowTarget = this.shadowTarget;
 
     }
+
+    // 更新光线位置
+    updatePosition(targetPosition) { 
+        customAnimation.to(this.shadowTarget.position, 0.5, {x: targetPosition.x, y: targetPosition.y, z: targetPosition.z});
+        customAnimation.to(this.shadowLight.position, 0.5, {x: 10 + targetPosition.x, y: 30 + targetPosition.y, z: 20 + targetPosition.z});
+    } 
 }
 
 export default new Light()

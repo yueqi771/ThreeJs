@@ -37,6 +37,14 @@ class Scene {
         this.camera.instance.add(this.background.instance);
     }
 
+    // 更新相机位置
+    updateCameraPosition(targetPosition) {
+        // 更新相机位置
+        this.camera.updatePosition(targetPosition);
+        // 更新光线位置
+        this.light.updatePosition(targetPosition);
+    }
+
     render() {
         this.renderer.render(this.instance, this.camera.instance);
     }

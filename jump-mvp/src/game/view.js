@@ -13,12 +13,13 @@ class GameView {
     initGameOver(callbacks) {
         this.gameOver = new GameOver(callbacks);
         this.gameOver.init({
-            scene: this.gameStart.scene
+            scene: this.gameStart.scene,
+            camera: this.gameStart.scene.camera.instance,
         });
     }
 
     showGameOverPage() {
-        this.gameStart.hide();
+        // this.gameStart.hide();
         this.gameOver.show();
         console.log('游戏结束了');
     }

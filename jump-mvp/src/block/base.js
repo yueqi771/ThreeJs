@@ -52,10 +52,10 @@ class BaseBlock {
             z: this.instance.position.z
         }
 
-        vertices.push([centerPosition.x + this.width / 2, centerPosition.y + this.width / 2 ]);
-        vertices.push([centerPosition.x + this.width / 2, centerPosition.y - this.width / 2 ]);
-        vertices.push([centerPosition.x - this.width / 2, centerPosition.y + this.width / 2 ]);
-        vertices.push([centerPosition.x - this.width / 2, centerPosition.y - this.width / 2 ]);
+        vertices.push([centerPosition.x + this.width / 2, centerPosition.z + this.width / 2 ]);
+        vertices.push([centerPosition.x + this.width / 2, centerPosition.z - this.width / 2 ]);
+        vertices.push([centerPosition.x - this.width / 2, centerPosition.z + this.width / 2 ]);
+        vertices.push([centerPosition.x - this.width / 2, centerPosition.z - this.width / 2 ]);
 
         return vertices;
 

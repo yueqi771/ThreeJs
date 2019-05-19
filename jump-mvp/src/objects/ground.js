@@ -19,6 +19,12 @@ class Ground {
         this.instance.position.y = - 16 / 3.2;
 
     }
+
+    // 更新地面位置
+    updatePosition(targetPosition) {
+        this.instance.position.x = targetPosition.x;
+        this.instance.position.z = targetPosition.z;
+    }
 }
 
 export default new Ground();
