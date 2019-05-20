@@ -209,11 +209,11 @@ class Bottle {
 
     _jump(tickTime) {
         const t = tickTime / 1000;
-        this.flyingTime = this.flyingTime + t;
         this.translateH = this.velocity.vx * t;
         this.translateY = this.velocity.vy * t - 0.5 * gameConfig.gravity * t * t - gameConfig.gravity * this.flyingTime * t;
         this.obj.translateY(this.translateY);
         this.obj.translateOnAxis(this.axis, this.translateH);
+        this.flyingTime = this.flyingTime + t;
     }
 
     // 瓶子旋转方法
