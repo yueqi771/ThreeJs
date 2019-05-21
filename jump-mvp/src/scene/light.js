@@ -39,6 +39,11 @@ class Light {
 
     }
 
+    reset() {
+        this.shadowLight.position.set(10, 30, 30);
+        this.shadowTarget.position.set(0, 0, 0);
+    }
+
     // 更新光线位置
     updatePosition(targetPosition) { 
         customAnimation.to(this.shadowTarget.position, 0.5, {x: targetPosition.x, y: targetPosition.y, z: targetPosition.z});

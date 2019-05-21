@@ -145,6 +145,7 @@ class GameStart {
                 }
             }else {
                 // game over
+                this.removeTouchEvent()
                 this.callbacks.showGameOverPage();
             }
         }
@@ -204,11 +205,38 @@ class GameStart {
     }
 
     hide() {
-        this.mesh.visible = false;
+        this.visible = false;
     }
 
     restart() {
+        this.deleteObject();
+        this.scene.reset();
+        this.bottle.reset();
+        this.addInitBlock();
+        this.addGround();
+        this.bindTouchEvent();
+        
         console.log('game page restart')
+    }
+
+
+    // 重新启动游戏
+    deleteObject() {
+        let obj = this.scene.instance.getObjectByName('block');
+        while(obj) {
+            this.scene.instance.remove();
+            if(obj.geometry) {
+                obj.geometry.dispose();
+            }
+            if(obj.material) {
+                obj.material.dispose();
+            }
+
+            obj = this.scene.instance.getObjectByName('block');
+
+            this.scene.instance.remove(this.bottle.obj);
+            this.scene.instance.remove(this.ground.instance);
+        }
     }
 
     // 添加bottle（瓶子）

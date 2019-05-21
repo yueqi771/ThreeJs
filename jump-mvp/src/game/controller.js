@@ -12,7 +12,7 @@ class GameController {
                     this.gameView.showGameOverPage();
                     break;
                 case 'game-start': 
-                    this.gameView.showGamePage();
+                    this.gameView.showGameStartPage();
                     break;
                 default:
                     return;

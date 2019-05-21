@@ -37,6 +37,11 @@ class Scene {
         this.camera.instance.add(this.background.instance);
     }
 
+    reset() {
+        this.camera.reset();
+        this.light.reset();
+    }
+
     // 更新相机位置
     updateCameraPosition(targetPosition) {
         // 更新相机位置

@@ -133,6 +133,12 @@ class Bottle {
         }
     }
 
+    reset() {
+        this.stop();
+        this.obj.position.set(bottleConfig.initPosition.x, bottleConfig.initPosition.y + 30, bottleConfig.initPosition.z)
+    }
+
+
     // 更新瓶子的动作
     update() {
         if(this.status === 'shrink') {

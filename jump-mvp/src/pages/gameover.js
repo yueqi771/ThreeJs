@@ -15,6 +15,15 @@ class GameOver {
 
     initGameoverCanvas(options) {
         const aspect = window.innerHeight / window.innerWidth;
+        // gameover区域范围
+        this.region = [
+            (window.innerWidth - 200) / 2,
+            (window.innerWidth - 200) / 2 + 200,
+            (window.innerHeight - 100) / 2,
+            (window.innerHeight - 100) / 2 + 100,
+
+        ]
+
         this.camera = options.camera;
         this.canvas = document.createElement('canvas');
         this.canvas.width = window.innerWidth;
@@ -50,15 +59,33 @@ class GameOver {
 
     show() {
         this.obj.visible = true;
-        console.log('game over show')
+        this.bindTouchEvent()
+        console.log('game over show');
     }
 
     hide() {
         this.obj.visible = false;
+        this.removeTouchEvent()
+    }
+
+    onTouchEnd(e) {
+        // 获取当前点击坐标；
+        const pageX = e.changedTouches[0].pageX;
+        const pageY = e.changedTouches[0].pageY;
+
+        // 判断点击是否在gameover区域里面
+        if(pageX > this.region[0] && pageX < this.region[1] && pageY > this.region[2] && pageY < this.region[3]) {
+            // 重启游戏
+            this.callbacks.gameRestart();
+        }
     }
 
     bindTouchEvent() {
+        canvas.addEventListener('touchend', this.onTouchEnd.bind(this));
+    }
 
+    removeTouchEvent() {
+        canvas.removeEventListener('touchend', this.onTouchEnd.bind(this));
     }
 }
 
