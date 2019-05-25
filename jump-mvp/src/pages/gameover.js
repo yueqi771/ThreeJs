@@ -21,7 +21,6 @@ class GameOver {
             (window.innerWidth - 200) / 2 + 200,
             (window.innerHeight - 100) / 2,
             (window.innerHeight - 100) / 2 + 100,
-
         ]
 
         this.camera = options.camera;
@@ -40,6 +39,7 @@ class GameOver {
         this.geometry = new THREE.PlaneGeometry(sceneConfig.frustumSize * 2, aspect * sceneConfig.frustumSize * 2);
         // 通过geometry和meterial生成一个THREE.js的网格
         this.obj = new THREE.Mesh(this.geometry, this.material);
+        this.obj.visible = false;
         this.obj.position.z = 20;
         // this.obj.rotation.y = Math.PI
 
@@ -53,14 +53,14 @@ class GameOver {
         this.context.fillText('Game Over', (window.innerWidth - 200) / 2 + 50 , (window.innerHeight - 100) / 2 + 55);
         // 将文字进行旋转
         this.texture.needsUpdate = true;
-        this.obj.visible = false;
+        this.obj.visible = false
         this.camera.add(this.obj);
     }
 
     show() {
         this.obj.visible = true;
         this.bindTouchEvent()
-        console.log('game over show');
+        // console.log('game over show');
     }
 
     hide() {
@@ -68,12 +68,14 @@ class GameOver {
         this.removeTouchEvent()
     }
 
-    onTouchEnd(e) {
+    onTouchEnd = (e) => {
+        // debugger
         // 获取当前点击坐标；
         const pageX = e.changedTouches[0].pageX;
         const pageY = e.changedTouches[0].pageY;
 
         // 判断点击是否在gameover区域里面
+        console.log(12312)
         if(pageX > this.region[0] && pageX < this.region[1] && pageY > this.region[2] && pageY < this.region[3]) {
             // 重启游戏
             this.callbacks.gameRestart();
@@ -81,11 +83,11 @@ class GameOver {
     }
 
     bindTouchEvent() {
-        canvas.addEventListener('touchend', this.onTouchEnd.bind(this));
+        canvas.addEventListener('touchend', this.onTouchEnd);
     }
 
     removeTouchEvent() {
-        canvas.removeEventListener('touchend', this.onTouchEnd.bind(this));
+        canvas.removeEventListener('touchend', this.onTouchEnd);
     }
 }
 

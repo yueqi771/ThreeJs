@@ -5,6 +5,7 @@ class GameController {
     constructor() {
         this.gameView = gameView;
         this.gameModel = gameModel;
+
         this.gameModel.stageChange.attach((sender, args) => {
             const stageName = args.stage;
             switch(stageName) {
@@ -37,6 +38,7 @@ class GameController {
 
         this.gameView.initGamePage(gamePageCallbacks);
         this.gameView.initGameOver(gameOverCallbacks);
+        this.gameModel.setStage('game-start')
     }
 
 }

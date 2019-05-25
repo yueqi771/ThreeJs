@@ -1,8 +1,10 @@
 import GameStart from '../pages/gamestart.js'
 import GameOver from '../pages/gameover.js'
+import Event from '../utils/event'
 
 class GameView {
     constructor() {
+        this.restartButtonClicked = new Event(this)
     }
 
     initGamePage(callbacks) {
@@ -19,15 +21,15 @@ class GameView {
     }
 
     showGameOverPage() {
-        // this.gameStart.hide();
         this.gameOver.show();
+        // this.gameStart.hide();
         console.log('游戏结束了');
     }
 
     showGameStartPage() {
-        this.gameOverPage.hide();
-        this.gameStartPage.restart();
-        this.gameStartPage.show();
+        this.gameOver.hide();
+        this.gameStart.restart();
+        this.gameStart.show();
     }
 
     restartGame() {

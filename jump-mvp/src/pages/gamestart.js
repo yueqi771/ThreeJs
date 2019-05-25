@@ -7,6 +7,7 @@ import blockConfig from '../../config/block.config';
 import gameConfig from '../../config/game.config';
 import bottleConfig from '../../config/bottle.config';
 import utils from '../utils/index'
+import ScoreText from '../view3d/scoreText';
 
 // 跳跃后的状态
 const HIT_NEXT_BLOCK_CENTER = 1;
@@ -21,9 +22,11 @@ class GameStart {
 
     constructor(callbacks) {
         this.callbacks = callbacks;
+        this.state = 'stop';
         this.targetPosition = {}; 
         // 是否检测结束逻辑
         this.checkingHit = false;
+        this.score = 0;
     }
 
     init() {
@@ -31,36 +34,48 @@ class GameStart {
         this.scene = scene;
         this.ground = ground;
         this.bottle = bottle;
+        this.scoreText = new ScoreText();
         this.scene.init();
         this.ground.init();
         this.bottle.init();
+         this.scoreText.init({
+            fillStyle: 0x666699,
+        })
         this.addBlock();
         this.addGround();
         this.addBottle();
+        this.addScore();
+       
+        // this.bindTouchEvent()
         // 添加touch事件
-        this.bindTouchEvent()
         this.render();
+
+
+       
     }
 
     // 添加touch事件
     bindTouchEvent() {
-        canvas.addEventListener('touchstart', this.touchStartCallback.bind(this));
-        canvas.addEventListener('touchend', this.touchEndCallback.bind(this));
+        console.log('touch event')
+
+        canvas.addEventListener('touchstart', this.touchStartCallback);
+        canvas.addEventListener('touchend', this.touchEndCallback);
     }
 
     // 移除touch事件
     removeTouchEvent() {
-        canvas.removeEventListener('touchstart', this.touchStartCallback.bind(this));
-        canvas.removeEventListener('touchend', this.touchEndCallback.bind(this));
+        console.log('remove event')
+        canvas.removeEventListener('touchstart', this.touchStartCallback);
+        canvas.removeEventListener('touchend', this.touchEndCallback);
     }
 
-    touchStartCallback() {
+    touchStartCallback = () => {
         this.touchStartTime = Date.now();
         this.currentBlock.shrink();
         this.bottle.shrink();
     }
 
-    touchEndCallback() {
+    touchEndCallback = () => {
         this.touchEndTime = Date.now();
         const duration = this.touchEndTime - this.touchStartTime;
         
@@ -83,6 +98,16 @@ class GameStart {
         this.bottle.rotate();
         this.bottle.jump(duration);
         console.log('touch end callback')
+    }
+
+    // 将分数添加到场景中
+    addScore() {
+        this.scene.addScore(this.scoreText.instance);
+    }
+
+    updateScore(score) {
+        this.scoreText.updateScore(score);
+        this.scene.updateScore(this.scoreText.instance);
     }
 
     // 更新下一个砖块
@@ -141,11 +166,16 @@ class GameStart {
 
                 // 渲染下一个砖块
                 if(this.hit == HIT_NEXT_BLOCK_CENTER || this.hit == HIT_NEXT_BLOCK_NORMAL) {
+                    // 更新分数
+                    this.score = this.score + 1;
+                    this.updateScore(this.score)
                     this.updateNextBlock();
                 }
             }else {
+                this.checkingHit = false;
+
                 // game over
-                this.removeTouchEvent()
+                this.removeTouchEvent();
                 this.callbacks.showGameOverPage();
             }
         }
@@ -189,19 +219,23 @@ class GameStart {
             this.currentBlock.update()
         }
 
-        this.scene.render();
         if(this.bottle) {
             this.bottle.update()
         }
+
         // 是否开始检测结束逻辑
         if(this.checkingHit) {
             this.checkBottleHit();
+        }
+
+        if (this.visible) {
+            this.scene.render()
         }
         requestAnimationFrame(this.render.bind(this));
     }
 
     show() {
-        this.mesh.visible = true;
+        this.visible = true;
     }
 
     hide() {
@@ -212,9 +246,12 @@ class GameStart {
         this.deleteObject();
         this.scene.reset();
         this.bottle.reset();
-        this.addInitBlock();
+        this.addBlock();
         this.addGround();
+        this.addBottle();
         this.bindTouchEvent();
+        this.updateScore('0');
+        this.score = 0
         
         console.log('game page restart')
     }
@@ -224,19 +261,18 @@ class GameStart {
     deleteObject() {
         let obj = this.scene.instance.getObjectByName('block');
         while(obj) {
-            this.scene.instance.remove();
+            this.scene.instance.remove(obj);
             if(obj.geometry) {
                 obj.geometry.dispose();
             }
             if(obj.material) {
                 obj.material.dispose();
             }
-
             obj = this.scene.instance.getObjectByName('block');
 
-            this.scene.instance.remove(this.bottle.obj);
-            this.scene.instance.remove(this.ground.instance);
         }
+        this.scene.instance.remove(this.bottle.obj);
+        this.scene.instance.remove(this.ground.instance);
     }
 
     // 添加bottle（瓶子）

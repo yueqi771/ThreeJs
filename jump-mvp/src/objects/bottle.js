@@ -154,6 +154,7 @@ class Bottle {
     }
 
     showup() {
+        console.log(bottleConfig.initPosition)
         customAnimation.to(this.obj.position, 0.5, {
             x: bottleConfig.initPosition.x, 
             y: bottleConfig.initPosition.y + blockConfig.height / 2, 
