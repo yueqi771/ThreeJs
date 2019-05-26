@@ -2,9 +2,7 @@ import audioConfig from '../../config/audio.config';
 import gameView from '../game/view'
 class AudioManager {
     constructor() {
-        console.log(123)
         this.init();
-
     }
     
     init() {
@@ -13,21 +11,22 @@ class AudioManager {
             this[key] = wx.createInnerAudioContext();
             this[key].src = audioConfig.audioSources[key];
 
-            this[key].play()
-            this[key].onError((e) => {
-                console.log(e)
-            });
+            console.log(this[key].src)
+            console.log(this[key])
 
         }
+
+        console.log(this)
+
         
         
         // 当按压收缩时， 收缩的音频要一直播放
-        this.shrink_end.loop = true;
-        this.shrink.onEnded(() => {
-            if(gameView.gameStart.bottle.status === 'shrink') {
-                this.shrink_end.play();
-            }
-        })
+        // this.shrink_end.loop = true;
+        // this.shrink.onEnded(() => {
+        //     if(gameView.gameStart.bottle.status === 'shrink') {
+        //         this.shrink_end.play();
+        //     }
+        // })
     }
 }
 
