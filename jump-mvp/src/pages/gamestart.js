@@ -8,6 +8,7 @@ import gameConfig from '../../config/game.config';
 import bottleConfig from '../../config/bottle.config';
 import utils from '../utils/index'
 import ScoreText from '../view3d/scoreText';
+import audioManager from '../modules/audio-manager'
 
 // 跳跃后的状态
 const HIT_NEXT_BLOCK_CENTER = 1;
@@ -27,6 +28,8 @@ class GameStart {
         // 是否检测结束逻辑
         this.checkingHit = false;
         this.score = 0;
+        console.log(audioManager.shrink.src)
+
     }
 
     init() {
@@ -56,8 +59,6 @@ class GameStart {
 
     // 添加touch事件
     bindTouchEvent() {
-        console.log('touch event')
-
         canvas.addEventListener('touchstart', this.touchStartCallback);
         canvas.addEventListener('touchend', this.touchEndCallback);
     }
@@ -73,6 +74,8 @@ class GameStart {
         this.touchStartTime = Date.now();
         this.currentBlock.shrink();
         this.bottle.shrink();
+        // 播放收缩音频
+        audioManager.shrink.play();
     }
 
     touchEndCallback = () => {
@@ -97,6 +100,10 @@ class GameStart {
         this.bottle.stop();
         this.bottle.rotate();
         this.bottle.jump(duration);
+
+        // 关闭音频
+        audioManager.shrink.stop()
+        audioManager.shrink_end.stop();
         console.log('touch end callback')
     }
 
