@@ -28,8 +28,6 @@ class GameStart {
         // 是否检测结束逻辑
         this.checkingHit = false;
         this.score = 0;
-        console.log(audioManager.shrink.src)
-
     }
 
     init() {
@@ -75,7 +73,7 @@ class GameStart {
         this.currentBlock.shrink();
         this.bottle.shrink();
         // 播放收缩音频
-        audioManager.shrink.play();
+        // audioManager.shrink.play();
     }
 
     touchEndCallback = () => {

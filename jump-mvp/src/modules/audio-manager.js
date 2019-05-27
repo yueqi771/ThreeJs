@@ -6,7 +6,7 @@ class AudioManager {
     }
     
     init() {
-        // 实例化音频
+        
         for(let key in audioConfig.audioSources) {
             this[key] = wx.createInnerAudioContext();
             this[key].src = audioConfig.audioSources[key];
@@ -16,17 +16,14 @@ class AudioManager {
 
         }
 
-        console.log(this)
-
-        
         
         // 当按压收缩时， 收缩的音频要一直播放
-        // this.shrink_end.loop = true;
-        // this.shrink.onEnded(() => {
-        //     if(gameView.gameStart.bottle.status === 'shrink') {
-        //         this.shrink_end.play();
-        //     }
-        // })
+        this.shrink_end.loop = true;
+        this.shrink.onEnded(() => {
+            if(gameView.gameStart.bottle.status === 'shrink') {
+                this.shrink_end.play();
+            }
+        })
     }
 }
 
