@@ -28,6 +28,8 @@ class GameStart {
         // 是否检测结束逻辑
         this.checkingHit = false;
         this.score = 0;
+        // 连续combo
+        this.combo = 0;
     }
 
     init() {
@@ -100,8 +102,8 @@ class GameStart {
         this.bottle.jump(duration);
 
         // 关闭音频
-        audioManager.shrink.stop()
-        audioManager.shrink_end.stop();
+        // audioManager.shrink.stop()
+        // audioManager.shrink_end.stop();
         console.log('touch end callback')
     }
 
@@ -171,8 +173,19 @@ class GameStart {
 
                 // 渲染下一个砖块
                 if(this.hit == HIT_NEXT_BLOCK_CENTER || this.hit == HIT_NEXT_BLOCK_NORMAL) {
-                    // 更新分数
+                    // combo逻辑
+                    if(this.hit == HIT_NEXT_BLOCK_CENTER) {
+                        this.combo = this.combo + 1;
+                        // audioManager['combo' + (this.combo <= 8 ? this.combo : '8')].play();
+                        this.score = 2 * this.combo + this.score;
+                    }else if(this.hit == HIT_NEXT_BLOCK_NORMAL) {
+                        this.combo = 0;
+                        // audioManager.success.play();
+                        // 更新分数
+                        this.score = this.score + 1;
+                    }
                     this.score = this.score + 1;
+
                     this.updateScore(this.score)
                     this.updateNextBlock();
                 }
