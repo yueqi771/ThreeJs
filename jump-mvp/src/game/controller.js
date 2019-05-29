@@ -1,10 +1,12 @@
 import gameView from './view';
 import gameModel from './model';
+import audioManager from '../modules/audio-manager'
 
 class GameController {
     constructor() {
         this.gameView = gameView;
         this.gameModel = gameModel;
+        window.audioManager = audioManager;
 
         this.gameModel.stageChange.attach((sender, args) => {
             const stageName = args.stage;

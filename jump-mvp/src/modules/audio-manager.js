@@ -7,7 +7,6 @@ class AudioManager {
     }
 
     init() {
-        debugger;
         for (let key in audioConfig.audioSources) {
             this[key] = wx.createInnerAudioContext()
             this[key].src = audioConfig.audioSources[key]

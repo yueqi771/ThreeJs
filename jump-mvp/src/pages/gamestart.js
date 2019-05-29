@@ -8,7 +8,6 @@ import gameConfig from '../../config/game.config';
 import bottleConfig from '../../config/bottle.config';
 import utils from '../utils/index'
 import ScoreText from '../view3d/scoreText';
-import audioManager from '../modules/audio-manager'
 
 // 跳跃后的状态
 const HIT_NEXT_BLOCK_CENTER = 1;
@@ -30,6 +29,7 @@ class GameStart {
         this.score = 0;
         // 连续combo
         this.combo = 0;
+        // console.log(audioManager.success.play())
     }
 
     init() {
@@ -173,18 +173,18 @@ class GameStart {
 
                 // 渲染下一个砖块
                 if(this.hit == HIT_NEXT_BLOCK_CENTER || this.hit == HIT_NEXT_BLOCK_NORMAL) {
+                    console.log(this.hit)
                     // combo逻辑
-                    if(this.hit == HIT_NEXT_BLOCK_CENTER) {
+                    if(this.hit === HIT_NEXT_BLOCK_CENTER) {
                         this.combo = this.combo + 1;
                         // audioManager['combo' + (this.combo <= 8 ? this.combo : '8')].play();
                         this.score = 2 * this.combo + this.score;
-                    }else if(this.hit == HIT_NEXT_BLOCK_NORMAL) {
+                    }else if(this.hit === HIT_NEXT_BLOCK_NORMAL) {
                         this.combo = 0;
                         // audioManager.success.play();
                         // 更新分数
                         this.score = this.score + 1;
                     }
-                    this.score = this.score + 1;
 
                     this.updateScore(this.score)
                     this.updateNextBlock();
@@ -330,7 +330,7 @@ class GameStart {
 
             // 判断当前的点是否在polygon里面
             if(utils.pointInPolygon(destination, nextPolygon)) {
-                if(Math.abs(nextDiff) < 5) {
+                if(Math.abs(nextDiff) < 10) {
                     result1 = HIT_NEXT_BLOCK_CENTER;
                 }else {
                     result1 = HIT_NEXT_BLOCK_NORMAL;
