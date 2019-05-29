@@ -8,6 +8,7 @@ import gameConfig from '../../config/game.config';
 import bottleConfig from '../../config/bottle.config';
 import utils from '../utils/index'
 import ScoreText from '../view3d/scoreText';
+import { tweenAnimation } from '../../lib/animation'
 
 // 跳跃后的状态
 const HIT_NEXT_BLOCK_CENTER = 1;
@@ -52,9 +53,6 @@ class GameStart {
         // this.bindTouchEvent()
         // 添加touch事件
         this.render();
-
-
-       
     }
 
     // 添加touch事件
@@ -190,11 +188,48 @@ class GameStart {
                     this.updateNextBlock();
                 }
             }else {
+                // game over
+                this.combo = 0;
+                this.removeTouchEvent();
+
+                // 如果跳到砖块后面
+                if(this.hit === GAME_OVER_CURRENT_BLOCK_BAKC || this.hit === GAME_OVER_NEXT_BLOCK_BACK) {
+                    // 停止动画
+                    tweenAnimation.killAll()
+                    // 瓶子更新状态重置
+                    this.bottle.stop();
+                    // 执行bottle前倾动画 
+                    this.bottle.forerake();
+                    // 播放结束声音
+                    audioManager.gall_from_block.play();
+                    // 方块复原
+                    this.bottle.obj.position.y = blockConfig.height / 2;
+                    // 展示gameover页面
+                    setTimeout(() => {
+                        this.callbacks.showGameOverPage();
+                    }, 1000)
+                }else if(this.hit === GAME_OVER_NEXT_BLOCK_FRONT) {
+                    tweenAnimation.killAll();
+                    // 瓶子更新状态重置
+                    this.bottle.stop();
+                    // 执行bottle前倾动画 
+                    this.bottle.hypsokinesis();
+                    // 播放结束声音
+                    audioManager.gall_from_block.play();
+                    // 重置bottle的高度
+                    this.bottle.obj.position.y = blockConfig.height / 2;
+                    // 展示gameover页面
+                    setTimeout(() => {
+                        this.callbacks.showGameOverPage();
+                    }, 1000)
+                }else {
+                    audioManager.fall.play();
+                    this.callbacks.showGameOverPage();
+
+                }
                 this.checkingHit = false;
 
-                // game over
-                this.removeTouchEvent();
-                this.callbacks.showGameOverPage();
+
             }
         }
     }
@@ -323,7 +358,7 @@ class GameStart {
 
         // 和跳在nextBlock上
         if(nextBlock) {
-            const nextDiff = Math.pow(destination[0] - nextBlock.instance.position.x, 2) + Math.pow(destination[1] - nextBlock.instance.position.y, 2);
+            const nextDiff = Math.pow(destination[0] - nextBlock.instance.position.x, 2) + Math.pow(destination[1] - nextBlock.instance.position.z, 2);
             
             // nextblock的边缘
             const nextPolygon = nextBlock.getVertices();

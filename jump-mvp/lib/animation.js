@@ -178,7 +178,7 @@ const tweenAnimation = exports.tweenAnimation = function tweenAnimation(from, to
         }
     
         // 当前运动的位置
-        let value =fnGetValue(start, from , to-from, during);
+        let value = fnGetValue(start, from , to-from, during);
     
         // 如果还没有运动到目标位置， 继续
         if(start <= during && selfAnimationId > killAnimationId) {
@@ -195,6 +195,10 @@ const tweenAnimation = exports.tweenAnimation = function tweenAnimation(from, to
     // 开始循环执行动画
     step();
 
+}
+
+const stopAllAnimation = exports.stopAllAnimation =  function stopAllAnimation() {
+    killAnimationId = animationId;
 }
 
 tweenAnimation.killAll = function() {
