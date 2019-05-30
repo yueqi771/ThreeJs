@@ -201,13 +201,13 @@ class GameStart {
                     // 执行bottle前倾动画 
                     this.bottle.forerake();
                     // 播放结束声音
-                    audioManager.gall_from_block.play();
+                    // audioManager.gall_from_block.play();
                     // 方块复原
                     this.bottle.obj.position.y = blockConfig.height / 2;
                     // 展示gameover页面
                     setTimeout(() => {
                         this.callbacks.showGameOverPage();
-                    }, 1000)
+                    }, 2000)
                 }else if(this.hit === GAME_OVER_NEXT_BLOCK_FRONT) {
                     tweenAnimation.killAll();
                     // 瓶子更新状态重置
@@ -215,13 +215,13 @@ class GameStart {
                     // 执行bottle前倾动画 
                     this.bottle.hypsokinesis();
                     // 播放结束声音
-                    audioManager.gall_from_block.play();
+                    // audioManager.gall_from_block.play();
                     // 重置bottle的高度
                     this.bottle.obj.position.y = blockConfig.height / 2;
                     // 展示gameover页面
                     setTimeout(() => {
                         this.callbacks.showGameOverPage();
-                    }, 1000)
+                    }, 2000)
                 }else {
                     audioManager.fall.play();
                     this.callbacks.showGameOverPage();

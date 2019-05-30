@@ -135,6 +135,8 @@ class Bottle {
 
     reset() {
         this.stop();
+        this.obj.rotation.x = 0;
+        this.obj.rotation.z = 0;
         this.obj.position.set(bottleConfig.initPosition.x, bottleConfig.initPosition.y + 30, bottleConfig.initPosition.z)
     }
 
@@ -153,14 +155,70 @@ class Bottle {
         
     }
 
+    // 瓶子坠落动画
     showup() {
-        console.log(bottleConfig.initPosition)
+        // audioManager.init.play();
         customAnimation.to(this.obj.position, 0.5, {
             x: bottleConfig.initPosition.x, 
             y: bottleConfig.initPosition.y + blockConfig.height / 2, 
             z: bottleConfig.initPosition.z,
             ease: 'Bounce.easeOut'
         })
+    }
+
+    // 瓶子前倾 
+    forerake() {
+        this.status = "forerake"; 
+        setTimeout(() => {
+            // 如果沿着x轴跳跃， 旋转
+            if(this.direction == 0) {
+                customAnimation.to(this.obj.rotation, 1, {
+                    z: -Math.PI / 2
+                })
+            }else {
+                customAnimation.to(this.obj.rotation, 1, {
+                    x: -Math.PI / 2
+                })
+            }
+
+            // 位置下移
+            setTimeout(() => {
+                customAnimation.to(this.obj.position, 0.4, {
+                    y: -blockConfig.height / 2 + 1.2
+                })
+            }, 350)
+        }, 200);
+
+    }
+
+    // 瓶子后倒
+    hypsokinesis() {
+        this.status = 'hypsokinesis';
+        setTimeout(() => {
+            if(this.direction === 0) {
+                customAnimation.to(this.obj.rotation, 0.8, {
+                    z: Math.PI / 2
+                })
+            }else {
+                customAnimation.to(this.obj.rotation, 0.8, {
+                    x: Math.PI / 2
+                })
+            }
+
+            setTimeout(() => {
+                customAnimation.to(this.obj.position, 0.4, {
+                    y: -blockConfig.height / 2 + 1.2
+                })
+                customAnimation.to(this.head.position, 0.2, {
+                    x: 1.125
+                })
+                customAnimation.to(this.head.position, 0.2, {
+                    x: 0,
+                    ease: 'Linear',
+                    deley: '0.2'
+                })
+            }, 350)
+        }, 200)
     }
 
     setDirection(direction, axis) {
