@@ -254,8 +254,8 @@ class GameStart {
     }
 
     addBlock() {
-        const cuboldBlock = this.currentBlock = new Cuboid(-15, 0, 0, 'well');
-        const cylinderBlock = this.nextBlock = new Cylinder(23, 0, 0);
+        const cuboldBlock = this.currentBlock = new Cuboid(-15, 0, 0, 'color');
+        const cylinderBlock = this.nextBlock = new Cylinder(23, 0, 0, 'color');
         this.targetPosition = {
             x: 23,
             y: 0,
