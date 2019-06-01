@@ -9,6 +9,7 @@ class Cuboid extends BaseBlock {
 
         this.loader = new THREE.TextureLoader();
 
+        const size = width || this.width
         
         if(name === 'color') {
             const seed = Math.floor(Math.random() * 6);
@@ -54,11 +55,6 @@ class Cuboid extends BaseBlock {
             topMesh.receiveShadow = true;
             topMesh.castShadow = true;
 
-            const topMesh = new THREE.Mesh(outerGeometry, outerMaterial);
-            topMesh.position.y = (innerHeight + outerHeight) / 2;
-            topMesh.receiveShadow = true;
-            topMesh.castShadow = true;
-
             const middleMesh = new THREE.Mesh(innerGeometry, innerMaterial);
             middleMesh.receiveShadow = true;
             middleMesh.castShadow = true;
@@ -73,7 +69,7 @@ class Cuboid extends BaseBlock {
             totalMesh.add(bottomMesh);
 
             this.instance = totalMesh;
-        }else if(name === 'well') {
+        }else {
             const geometry = new THREE.BoxGeometry(size, this.height, size);
             const material = new THREE.MeshLambertMaterial({
                 map: this.loader.load('resource/images/well.png')
@@ -82,17 +78,16 @@ class Cuboid extends BaseBlock {
             utils.mapUv(280, 428, geometry, 2, 0, 148, 280, 428); // top
             utils.mapUv(280, 428, geometry, 4, 0, 0, 280, 148, true); // right
             this.instance = new THREE.Mesh(geometry, material);
+            this.instance.receiveShadow = true;
+            // 允许投射阴影
+            this.instance.castShadow = true;
         }
 
         // 允许接受光源阴影
-        this.instance.receiveShadow = true;
         this.instance.name = 'block';
         this.x = x;
         this.y = y;
         this.z = z;
-
-        // 允许投射阴影
-        this.instance.castShadow = true;
 
         this.instance.position.x = this.x;
         this.instance.position.y = this.y;

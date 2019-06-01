@@ -1,7 +1,8 @@
 import bottleConfig from '../../config/bottle.config';
 import blockConfig from '../../config/block.config';
-import { customAnimation } from '../../lib/animation'
+import { customAnimation, tweenAnimation } from '../../lib/animation'
 import gameConfig from '../../config/game.config'
+import ScoreText from '../view3d/scoreText';
 
 class Bottle {
     constructor(x, y, z) {
@@ -105,6 +106,193 @@ class Bottle {
         this.bottle.position.x = 0;
 
         this.obj.add(this.bottle);
+
+        this.particles = [];
+        // 定义一个纹理
+        const whiteParticleMaterial = new THREE.MeshBasicMaterial({map: this.loader.load('/game/resource/images/white.png'), alPhaTest: 0.5});
+        const greenParticleMaterial = new THREE.MeshBasicMaterial({map: this.loader.load('/game/resource/images/green.png'), alPhaTest: 0.5});
+        
+        const particleGeometry = new THREE.PlaneGeometry(2, 2);
+
+        for(let i = 0; i < 15; i++) {
+            const particle = new THREE.Mesh(particleGeometry, whiteParticleMaterial);
+            particle.rotation.x = -Math.PI / 4;
+            particle.rotation.y = -Math.PI / 5;
+            particle.rotation.z = -Math.PI / 5; 
+            this.particles.push(particle);
+            this.obj.add(particle)
+        }
+
+        for(let i = 0; i < 5; i++) {
+            const particle = new THREE.Mesh(particleGeometry, greenParticleMaterial);
+            particle.rotation.x = -Math.PI / 4;
+            particle.rotation.y = -Math.PI / 5;
+            particle.rotation.z = -Math.PI / 5; 
+            this.particles.push(particle);
+            this.obj.add(particle)
+        }
+
+        // 实例化分数
+        this.scoreText = new ScoreText();
+        this.scoreText.init({
+            fillStyle: 0x252525
+        });
+        this.scoreText.instance.visible = false;
+        // 将分数正对于用户
+        this.scoreText.instance.rotation.y = -Math.PI / 4; 
+        this.scoreText.instance.scale.set(0.5, 0.5, 0.5);
+        this.obj.add(this.scoreText.instance)
+    }
+
+    showAddScore(score) {
+        const value = "+" + score;
+        this.scoreText.updateScore(value); 
+        this.scoreText.instance.visible = true;
+        this.scoreText.instance.material.opacity = 1;
+        this.scoreText.instance.position.y = 3;
+
+        // y轴方向改变
+        customAnimation.to(this.scoreText.instance.position, 0.7, {
+            y: blockConfig.height + 6 
+        })
+
+        tweenAnimation(this.scoreText.instance.material.opacity, 0, 700, 'Linear', (value, complete) => {
+            this.scoreText.instance.material.opacity = value;
+            if(complete) {
+                this.scoreText.instance.visible = false;
+            }
+        })
+    }
+
+    // 重置粒子状态
+    resetParticles() {
+        if(this.gatherTimer) {
+            clearTimeout(this.gatherTimer);
+        }
+
+        this.gatherTimer = null;
+
+        for(let i = 0; i < this.particles.length; i++) {
+            this.particles[i].gathering = false;
+            this.particles[i].scattering = false;
+            this.particles[i].visible = false;
+        }
+    }
+
+    scatterParticles() {
+        for(let i = 0; i < 10; i ++ ) {
+            this.particles[i].scattering = true;
+            this.particles[i].gathering = false;
+            this._scatterParticle(this.particles[i]);
+        }
+    }
+
+    // 粒子散开效果
+    _scatterParticle(particle) {
+        const minDistance = bottleConfig.bodyWidth / 2;
+        const maxDistance = 2;
+        const x = (minDistance + Math.random() * (maxDistance - minDistance)) * (1 - 2 * Math.random());
+        const z = (minDistance + Math.random() * (maxDistance - minDistance)) * (1 - 2 * Math.random());
+
+        particle.scale.set(1, 1, 1);
+        particle.visible = false;
+        particle.position.x = x;
+        particle.position.y = -0.5;
+        particle.position.z = z;
+
+        setTimeout(((particleItem) => {
+            return () => {
+                if(!particleItem.scattering) { return };
+                particleItem.visible = true;
+
+                const duration = 0.3 + Math.random() * 0.4;
+
+                // 聚集动画
+                customAnimation.to(particleItem.scale, duration, {
+                    x: 0.2,
+                    y: 0.2,
+                    z: 0.2,
+                })
+
+                customAnimation.to(particleItem.position, duration, {
+                    x: 2 * x,
+                    y: Math.random() * 2.5 + 2,
+                    z: 2 * z,
+                    onComplete: () => {
+                        if(particleItem.gathering) {
+                            // this._gatherParticles(particle);
+                            particleItem.scattering = false;
+                            particleItem.visible = false;
+                        }
+                    }
+                })
+            }
+        })(particle), Math.random() * 500)
+    }
+    
+    gatherParticles() {
+        for(let i = 10; i < 20; i++) {
+            // 设置状态
+            this.particles[i].gathering = true;
+            this.particles[i].scattering = false;
+            // 开始聚集
+            this._gatherParticles(this.particles[i]); 
+        }
+
+        // 循环运动的粒子
+        this.gatherTimer = setTimeout(() => {
+            for(let i = 0; i < 10; i++) {
+                // 设置状态
+                this.particles[i].gathering = true;
+                this.particles[i].scattering = false;
+                // 开始聚集
+                this._gatherParticles(this.particles[i]);
+            }
+        }, 500 + 1000 * Math.random())
+    }
+
+    // 单独粒子向中心聚集方法
+    _gatherParticles(particle) {
+        const minDistance = 1;
+        const maxDistance = 8;
+        particle.scale.set(1, 1, 1);
+        particle.visible = false;
+
+        const x = Math.random() > 0.5 ? 1 : -1;
+        const z = Math.random() > 0.5 ? 1 : -1;
+        particle.position.x = (minDistance + (maxDistance - minDistance) * Math.random()) * x;
+        particle.position.y = minDistance + (maxDistance - minDistance) * Math.random();
+        particle.position.z = (minDistance + (maxDistance - minDistance) * Math.random()) * x;
+        // particle.position.x = (maxDistance * Math.random()) * x;
+        // particle.position.y = maxDistance * Math.random();
+        // particle.position.z = (maxDistance * Math.random()) * x;
+
+        setTimeout(((particleItem) => {
+            return () => {
+                if(!particleItem.gathering) { return };
+                particleItem.visible = true;
+
+                const duration = 0.5 + Math.random() * 0.4;
+
+                // 聚集动画
+                customAnimation.to(particleItem.scale, duration, {
+                    x: 0.8 + Math.random(),
+                    y: 0.8 + Math.random(),
+                    z: 0.8 + Math.random(),
+                })
+
+                customAnimation.to(particleItem.position, duration, {
+                    x: Math.random() * x,
+                    y: Math.random() * 2.5,
+                    z: Math.random() * z,
+                    onComplete: () => {
+                        if(particleItem.gathering) {
+                            this._gatherParticles(particleItem);
+                        }
+                    }
+                })
+            }
+        })(particle), Math.random() * 500)
     }
 
     loadTexture() {
@@ -227,11 +415,13 @@ class Bottle {
     }
 
     shrink() {
-        this.status = "shrink"
+        this.status = "shrink";
+        this.gatherParticles();
     }
 
     jump() {
-        this.status = 'jump'
+        this.status = 'jump';
+        this.resetParticles();
     }
 
     stop() {

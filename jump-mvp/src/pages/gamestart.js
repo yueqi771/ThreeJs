@@ -112,7 +112,7 @@ class GameStart {
 
     updateScore(score) {
         this.scoreText.updateScore(score);
-        this.scene.updateScore(this.scoreText.instance);
+        // this.scene.updateScore(this.scoreText.instance);
     }
 
     // 更新下一个砖块
@@ -140,9 +140,12 @@ class GameStart {
 
         this.setDirection(direction);
         if(type == 'cuboid') {
-            this.nextBlock = new Cuboid(targetPosition.x, targetPosition.y, targetPosition.z, width);
+            const cuboidSeed = Math.floor(Math.random() * 2);
+
+
+            this.nextBlock = new Cuboid(targetPosition.x, targetPosition.y, targetPosition.z, cuboidSeed ? 'well' : 'color', width);
         }else {
-            this.nextBlock = new Cylinder(targetPosition.x, targetPosition.y, targetPosition.z, width);
+            this.nextBlock = new Cylinder(targetPosition.x, targetPosition.y, targetPosition.z, 'color',  width);
         }
 
         // 添加到场景中
@@ -176,11 +179,13 @@ class GameStart {
                     if(this.hit === HIT_NEXT_BLOCK_CENTER) {
                         this.combo = this.combo + 1;
                         // audioManager['combo' + (this.combo <= 8 ? this.combo : '8')].play();
+                        this.bottle.showAddScore( 2 * this.combo)
                         this.score = 2 * this.combo + this.score;
                     }else if(this.hit === HIT_NEXT_BLOCK_NORMAL) {
                         this.combo = 0;
                         // audioManager.success.play();
                         // 更新分数
+                        this.bottle.showAddScore(1)
                         this.score = this.score + 1;
                     }
 
@@ -228,9 +233,10 @@ class GameStart {
 
                 }
                 this.checkingHit = false;
-
-
             }
+
+            // 粒子健出效果
+            this.bottle.scatterParticles()
         }
     }
 
@@ -299,6 +305,7 @@ class GameStart {
         this.deleteObject();
         this.scene.reset();
         this.bottle.reset();
+        this.ground.reset()
         this.addBlock();
         this.addGround();
         this.addBottle();
@@ -322,7 +329,6 @@ class GameStart {
                 obj.material.dispose();
             }
             obj = this.scene.instance.getObjectByName('block');
-
         }
         this.scene.instance.remove(this.bottle.obj);
         this.scene.instance.remove(this.ground.instance);
@@ -365,7 +371,7 @@ class GameStart {
 
             // 判断当前的点是否在polygon里面
             if(utils.pointInPolygon(destination, nextPolygon)) {
-                if(Math.abs(nextDiff) < 10) {
+                if(Math.abs(nextDiff) < 5) {
                     result1 = HIT_NEXT_BLOCK_CENTER;
                 }else {
                     result1 = HIT_NEXT_BLOCK_NORMAL;

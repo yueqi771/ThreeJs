@@ -23,9 +23,7 @@ customAnimation.to = function(obj, duration, options) {
         if(name === 'delay') {
             // 覆盖delay
             delay = options[name]
-        } else if(name === 'onComplete') {
-            
-        } else if(name === 'ease') {
+        }  else if(name === 'ease') {
 
         } else {
             setTimeout(function(name) {
@@ -33,7 +31,7 @@ customAnimation.to = function(obj, duration, options) {
                     tweenAnimation(obj[name], options[name], duration, options.ease || 'Linear', function(value, complete) {
                         obj[name] = value;
                         if(complete) {
-                            options.onComplete && options.onComplete();
+                            options.onComplete && options.onComplete(value);
                         }
                     });
                 }
@@ -78,14 +76,6 @@ const tweenAnimation = exports.tweenAnimation = function tweenAnimation(from, to
         return -1;
     };
 
-    if(!isNumber(from) || !isNumber(to)) {
-        if(window.console) {
-            console.error('form和to两个参数必须为数值')
-        }
-    
-        return 0
-    }
-    
     // 缓动算法
     let tween = Tween;
     
