@@ -20,6 +20,7 @@ class Camera {
 
     reset() {
         this.instance.position.set(-10, 10, 10);
+        // 测试
         this.target = new THREE.Vector3(0, 0, 0)
     }
 
